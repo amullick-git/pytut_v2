@@ -281,7 +281,7 @@
                     marker = '<i class="bi bi-pencil-fill text-primary"></i>'; // In progress
                  }
             }
-            chapterLink.innerHTML = marker + chapter.title.replace(/<br>.*$/, ''); // Use only main title
+            chapterLink.innerHTML = marker + chapter.title;
         }
 
         function highlightActiveChapter(chapterId) {
