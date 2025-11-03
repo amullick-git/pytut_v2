@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  e2e:
+    build: .
+    volumes:
+      - ./:/app:cached
+    tty: true
+    environment:
+      CI: "true"
+    command: ["npx", "playwright", "test", "--reporter=list"]
