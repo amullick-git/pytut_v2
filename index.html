@@ -227,7 +227,21 @@
         function loadChapter(chapterId) {
             currentChapter = chapterId;
             const chapter = tutorialContent[chapterId];
-            document.getElementById('tutorial').innerHTML = chapter.content;
+
+            let chapterHtml = '';
+            // Check for the new structure (story + sections)
+            if (chapter.story && chapter.sections) {
+                chapterHtml += chapter.story;
+                chapter.sections.forEach((section, index) => {
+                    if (index > 0) {
+                        chapterHtml += '<hr class="my-4">'; // Add a separator between sections
+                    }
+                    chapterHtml += `<h3>${section.title}</h3><div>${section.content}</div>`;
+                });
+            } else { // Fallback to the old structure (single content property)
+                chapterHtml = chapter.content;
+            }
+            document.getElementById('tutorial').innerHTML = chapterHtml;
 
             // Add copy buttons to all <pre> blocks in the tutorial section
             document.querySelectorAll('.tutorial-section pre').forEach(pre => {

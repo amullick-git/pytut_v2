@@ -1,24 +1,28 @@
+console.log("Loading chapter3.js...");
+
 export const chapter3 = {
     title: "The Treasure Boxes 💎📦<br><small class='text-muted'>Variables & Types</small>",
-    content: `
+    story: `
         <div class="alert alert-info">
             <p>
                 Deep inside the Code Forest, you find glowing treasure boxes of different shapes and colors. Each one can hold something special—a number, a word, or even a True/False switch.
                 These are <strong>variables</strong> — Python's magical storage boxes that remember things for you!
             </p>
         </div>
-
-        <h3>1: What’s a Variable?</h3>
-        <p>A <strong>variable</strong> is like a labeled box where you can store a value. You can open the box later and see what’s inside—or replace it with something new.</p>
+    `,
+    sections: [
+        {
+            title: "1: What’s a Variable?",
+            content: `<p>A <strong>variable</strong> is like a labeled box where you can store a value. You can open the box later and see what’s inside—or replace it with something new.</p>
         <pre><code>coins = 10
 player = "Ari"
 print(coins)
 print(player)</code></pre>
         <p>🪄 You just created two boxes—one named <code>coins</code>, one named <code>player</code>.</p>
-
-        <hr class="my-4">
-        <h3>2: Naming Your Boxes</h3>
-        <p>Variable names can be almost anything you like—but they must follow the rules:</p>
+        `},
+        {
+            title: "2: Naming Your Boxes",
+            content: `<p>Variable names can be almost anything you like—but they must follow the rules:</p>
         <ul>
             <li>Use <strong>letters</strong>, <strong>numbers</strong>, or <strong>underscores</strong>.</li>
             <li>Can’t start with a number.</li>
@@ -26,18 +30,19 @@ print(player)</code></pre>
             <li>Python is <strong>case-sensitive</strong> → <code>Name</code> ≠ <code>name</code>.</li>
         </ul>
 
-        <hr class="my-4">
-        <h3>3: Variables Can Change</h3>
-        <p>You can change what’s inside the box at any time:</p>
+        `},
+        {
+            title: "3: Variables Can Change",
+            content: `<p>You can change what’s inside the box at any time:</p>
         <pre><code>coins = 10
 print(coins)
 coins = coins + 5
 print(coins)</code></pre>
         <p>✨ The box <code>coins</code> first held 10, now it holds 15. That’s why they’re called <strong>variables</strong>—their value can <em>vary</em>!</p>
-
-        <hr class="my-4">
-        <h3>4: Different Kinds of Boxes (Data Types)</h3>
-        <p>Python boxes can hold different kinds of treasures—called <strong>types</strong>.</p>
+        `},
+        {
+            title: "4: Different Kinds of Boxes (Data Types)",
+            content: `<p>Python boxes can hold different kinds of treasures—called <strong>types</strong>.</p>
         <ul>
             <li><code>int</code>: Whole numbers like <code>10</code> or <code>-3</code>.</li>
             <li><code>float</code>: Decimal numbers like <code>2.5</code> or <code>0.1</code>.</li>
@@ -49,32 +54,34 @@ height = 1.42           # float
 name = "Ari"            # str
 has_sword = True        # bool</code></pre>
 
-        <hr class="my-4">
-        <h3>5: Mixing Types (and Why It Matters)</h3>
-        <p>You can do math with numbers, but what happens if you mix types?</p>
+        `},
+        {
+            title: "5: Mixing Types (and Why It Matters)",
+            content: `<p>You can do math with numbers, but what happens if you mix types?</p>
         <pre><code>age = 10
 print("I am " + age + " years old")  # ❌ Error!</code></pre>
         <p>To fix it, turn the number into a string using <code>str()</code> or use an f-string:</p>
         <pre><code>age = 10
 print("I am " + str(age) + " years old")  # ✅
 print(f"I am {age} years old")  # ✅ Also great!</code></pre>
-
-        <hr class="my-4">
-        <h3>6: Shortcuts in Math (Operators)</h3>
-        <pre><code>coins = 10
+        `},
+        {
+            title: "6: Shortcuts in Math (Operators)",
+            content: `<pre><code>coins = 10
 coins += 5   # same as coins = coins + 5
 coins -= 2   # subtract
 coins *= 3   # multiply
 coins /= 4   # divide</code></pre>
         <p>These shortcuts make your code tidy and quick!</p>
-
-        <hr class="my-4">
-        <h3>7: Turning One Type into Another (Casting)</h3>
-        <p>Sometimes, you’ll want to convert between types.</p>
+        `},
+        {
+            title: "7: Turning One Type into Another (Casting)",
+            content: `<p>Sometimes, you’ll want to convert between types.</p>
         <pre><code>num_as_string = "42"
 num_as_int = int(num_as_string)
 print(num_as_int * 2) # Output: 84</code></pre>
-    `,
+    `}
+    ], // <-- The comma was moved here, after the closing brace of the last object.
     exercises: [
         {
             id: 'circle_area',
@@ -195,3 +202,5 @@ def check():
         }
     ]
 };
+
+console.log("chapter3 object:", chapter3);

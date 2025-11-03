@@ -1,15 +1,19 @@
+console.log("Loading chapter2.js...");
+
 export const chapter2 = {
     title: "The Chat Crystal 💎<br><small class='text-muted'>Talking to the Computer</small>",
-    content: `
+    story: `
         <div class="alert alert-info">
             <p>
                 You've just discovered Python's "Chat Crystal." 💎 When you speak to it, it listens carefully—and answers!
                 But here's the trick: you must speak in Python's special language. Ready to learn how to <em>talk</em> to your computer?
             </p>
         </div>
-
-        <h3>1: Saying Hello 👋</h3>
-        <p>Let's begin the conversation.<br>
+    `,
+    sections: [
+        {
+            title: "1: Saying Hello 👋",
+            content: `<p>Let's begin the conversation.<br>
             In Python, when you want to show something on the screen, you use a <strong>function</strong> called <code>print()</code>.</p>
 
         <pre><code>print("Hello, world!")</code></pre>
@@ -23,9 +27,10 @@ export const chapter2 = {
 
         <pre><code>print("I am learning Python!")
 print('This is fun!')</code></pre>
-
-        <hr class="my-4">
-        <h3>2: Talking with Words and Numbers 🔤+🔢</h3>
+        `},
+        {
+            title: "2: Talking with Words and Numbers 🔤+🔢",
+            content: `
         <p>Python can talk about <strong>words</strong> (called <em>strings</em>) and <strong>numbers</strong> too!</p>
 
         <pre><code>print("2 + 2 =", 2 + 2)</code></pre>
@@ -34,18 +39,20 @@ print('This is fun!')</code></pre>
         <pre>2 + 2 = 4</pre>
 
         <p>It's like the computer is explaining what you asked — pretty smart, right?</p>
-
-        <hr class="my-4">
-        <h3>3: Your Own Sentences ✍️</h3>
+        `},
+        {
+            title: "3: Your Own Sentences ✍️",
+            content: `
         <p>You can print multiple things in one line:</p>
 
         <pre><code>print("My name is", "Ava")
 print("I am", 10, "years old")</code></pre>
 
         <p>Python automatically adds spaces between the pieces.</p>
-
-        <hr class="my-4">
-        <h3>4: Joining Words (String Concatenation) 🔗</h3>
+        `},
+        {
+            title: "4: Joining Words (String Concatenation) 🔗",
+            content: `
         <p>This long word means "stick together."<br>
             You can glue words using the <strong><code>+</code></strong> sign:</p>
 
@@ -57,9 +64,10 @@ print("I am", 10, "years old")</code></pre>
         <div class="alert alert-warning mt-3">
             ⚠️ <strong>Careful!</strong> You must add spaces inside the quotes, or it'll look squished!
         </div>
-
-        <hr class="my-4">
-        <h3>5: Saving Words for Later (Variables) 📦</h3>
+        `},
+        {
+            title: "5: Saving Words for Later (Variables) 📦",
+            content: `
         <p>Let's store a name inside a box (a variable) so you can use it again.</p>
 
         <pre><code>name = "Ari"
@@ -67,9 +75,10 @@ print("Hello,", name)</code></pre>
 
         <p>Now, Python remembers your name!<br>
             You can reuse it anywhere in the program.</p>
-
-        <hr class="my-4">
-        <h3>6: Making the Computer Listen 👂</h3>
+        `},
+        {
+            title: "6: Making the Computer Listen 👂",
+            content: `
         <p>Now let's let the computer ask <strong>you</strong> something.</p>
 
         <pre><code>name = input("What is your name? ")
@@ -86,9 +95,10 @@ print("Nice to meet you,", name)</code></pre>
 print(name, "likes the color", color)</code></pre>
 
         <p>Now you're having a real conversation with your program! 💬</p>
-
-        <hr class="my-4">
-        <h3>7: The Power of F-Strings (Magic Blanks) ✨</h3>
+        `},
+        {
+            title: "7: The Power of F-Strings (Magic Blanks) ✨",
+            content: `
         <p>There’s an easier and cooler way to mix words and variables: <strong>f-strings</strong> (they start with <code>f</code> before the quotes).</p>
         <pre><code>name = "Ari"
 age = 10
@@ -97,17 +107,20 @@ print(f"My name is {name}, and I am {age} years old!")</code></pre>
         You can even do math inside them:</p>
         <pre><code>print(f"Next year, I’ll be {age + 1} years old!")</code></pre>
 
-        <hr class="my-4">
-        <h3>8: Changing Case ⬆️⬇️</h3>
+        `},
+        {
+            title: "8: Changing Case ⬆️⬇️",
+            content: `
         <p>You can make your text louder (uppercase) or softer (lowercase):</p>
         <pre><code>word = "Python"
 print(word.upper())  # PYTHON
 print(word.lower())  # python</code></pre>
         <p>Or make only the first letter uppercase:</p>
         <pre><code>print(word.capitalize())  # Python</code></pre>
-
-        <hr class="my-4">
-        <h3>9: Cleaning Up Extra Spaces 🧹</h3>
+        `},
+        {
+            title: "9: Cleaning Up Extra Spaces 🧹",
+            content: `
         <p>Sometimes when people type, they add extra spaces at the beginning or end by accident. Python can clean these up for you with <code>.strip()</code>!</p>
         <pre><code>messy_input = "   hello there   "
 clean_input = messy_input.strip()
@@ -119,13 +132,14 @@ print(f"Clean: '{clean_input}'")</code></pre>
 Clean: 'hello there'</pre>
 
         <div class="alert alert-info mt-3">
-            ✨ This is very useful with <code>input()</code> to make sure you get just the text you need. For example, if a user types " yes " instead of "yes", <code>strip()</code> will fix it!
+            ✨ This is very useful with <code>input()</code> to make sure you get just the text you need. For example, if a user types " yes " instead of "yes", <code>strip()</code> will fix it! You can even combine it with other methods.
         </div>
         <pre><code># Chaining methods: first strip, then lower
 answer = input("Do you like ice cream? (yes/no) ")
 if answer.strip().lower() == "yes":
     print("Me too! 🍦")</code></pre>
-    `,
+    `},
+    ], // <-- This comma was missing
     exercises: [
         {
             id: 'name_game',
@@ -166,7 +180,7 @@ last_name = "lovelace"
 # Your code here to print the initials like "A.L."`
         },
         {
-            id: 'compliment_machine',
+            id: 'compliment_machine', // <-- This comma was missing
             title: 'The Compliment Machine',
             description: `<p>Using the provided variables, print a compliment. 💬</p>
 <p>The output should be: "Zelda loves exploring — that's awesome!"</p>
@@ -355,3 +369,5 @@ def check():
         }
     ]
 };
+
+console.log("chapter2 object:", chapter2);
