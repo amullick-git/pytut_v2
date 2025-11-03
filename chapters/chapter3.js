@@ -1,7 +1,7 @@
 console.log("Loading chapter3.js..."); // eslint-disable-line no-console
 
 export const chapter3 = {
-    title: "The Treasure Boxes 💎📦<br><small class='text-muted'>Variables & Types</small>",
+    title: "The Treasure Boxes 📦<br><small class='text-muted'>Variables & Types</small>",
     story: `
         <div class="alert alert-info">
             <p>
