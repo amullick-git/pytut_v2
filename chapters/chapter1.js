@@ -2,8 +2,7 @@ export const chapter1 = {
     title: "The Beginning — Hello, Python! 🐍✨",
     content: `
         <div class="alert alert-info">
-            <p><strong>Story:</strong><br>
-            You stand at the <strong>Gates of Pythonia</strong>. A whisper says:
+            <p>You stand at the <strong>Gates of Pythonia</strong>. A whisper says:
             <blockquote>"Speak the ancient code to awaken me."</blockquote>
             </p>
         </div>

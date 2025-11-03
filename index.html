@@ -29,7 +29,7 @@
             top: 0;
         }
         .tutorial-section {
-            max-height: 600px;
+            max-height: 800px;
             overflow-y: auto;
             padding: 20px;
             border: 1px solid #ddd;
@@ -357,12 +357,49 @@
                 return;
             }
             
-            const output = await runCode();
+            const userCode = document.getElementById('editor').value;
+            const userOutput = await runCode();
             const expectedOutput = await runSolution(currentExercise.solution);
-            const isCorrect = output.trim() === expectedOutput.trim();
+
+            let feedback = [];
+            let allChecksPassed = true;
+
+            // 1. Check the final output
+            if (userOutput.trim() === expectedOutput.trim()) {
+                feedback.push('✅ Output is correct!');
+            } else {
+                feedback.push('❌ Output is incorrect.');
+                allChecksPassed = false;
+            }
+
+            // 2. Run custom validation checks if they exist
+            if (currentExercise.validation) {
+                for (const check of currentExercise.validation) { // Use for...of to handle async
+                    if (check.type === 'code_contains' && !userCode.includes(check.value)) {
+                        feedback.push(check.message);
+                        allChecksPassed = false;
+                    }
+                    if (check.type === 'ast_check') {
+                        const { passed, message } = await runAstCheck(userCode, check.script);
+                        if (!passed) {
+                            feedback.push(message);
+                            allChecksPassed = false;
+                        }
+                    }
+                }
+            }
             
-            document.getElementById('output').textContent += 
-                '\n\n' + (isCorrect ? '✅ Correct!' : '❌ Try again!');
+            let summaryMessage = '';
+            if(allChecksPassed) {
+                 summaryMessage = '\n\n🎉 Great job! All checks passed!';
+            } else {
+                summaryMessage = '\n\n🤔 Not quite there yet. Review the feedback below and try again!';
+            }
+
+            const detailedFeedback = '\n\n--- CHECK RESULTS ---\n' + feedback.join('\n');
+            
+            // Prepend the summary and then add the detailed feedback
+            document.getElementById('output').textContent += summaryMessage + detailedFeedback;
         }
 
         async function runSolution(solution) {
@@ -372,6 +409,33 @@
             `);
             await pyodide.runPythonAsync(solution);
             return pyodide.runPython("sys.stdout.getvalue()");
+        }
+
+        async function runAstCheck(userCode, checkScript) {
+            try {
+                // Pass user's code to pyodide as a global variable
+                pyodide.globals.set("user_code_to_check", userCode);
+                
+                // The checkScript will use the global 'user_code_to_check' variable
+                const fullScript = `
+import ast
+import json
+
+user_code = user_code_to_check
+
+${checkScript}
+
+# The check function is expected to be defined in the script and return (bool, str)
+result_passed, result_message = check() 
+json.dumps((result_passed, result_message))
+`;
+                const resultJson = await pyodide.runPythonAsync(fullScript);
+                const [passed, message] = JSON.parse(resultJson);
+                return { passed, message };
+            } catch (error) {
+                console.error("AST Check failed:", error);
+                return { passed: false, message: "⚠️ Error running validation check." };
+            }
         }
 
         function loadTutorialContent() {

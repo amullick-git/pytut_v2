@@ -2,8 +2,8 @@ export const chapter2 = {
     title: "Talking to the Computer 🗣️💻",
     content: `
         <div class="alert alert-info">
-            <p><strong>Story:</strong><br>
-                You've just discovered Python's "Chat Crystal." 💎 When you speak to it, it listens carefully — and answers!
+            <p>
+                You've just discovered Python's "Chat Crystal." 💎 When you speak to it, it listens carefully—and answers!
                 But here's the trick: you must speak in Python's special language. Ready to learn how to <em>talk</em> to your computer?
             </p>
         </div>
@@ -108,6 +108,28 @@ last_name = "lovelace"</code></pre>`,
 last_name = "lovelace"
 print(f"{first_name[0].upper()}.{last_name[0].upper()}.")`,
             hint: 'You can get the first letter of a string like `first_name` by using index `[0]`. Then, use the `.upper()` method to make it a capital letter. Finally, use an f-string to combine the pieces!',
+            validation: [
+                {
+                    type: 'ast_check',
+                    script: `
+def check():
+    try:
+        tree = ast.parse(user_code)
+    except SyntaxError:
+        return False, "Your code has a syntax error."
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and getattr(node.func, 'id', '') == 'print':
+            if not (node.args and isinstance(node.args[0], ast.JoinedStr)):
+                continue
+
+            fstring_code = ast.unparse(node.args[0])
+            if 'first_name[0]' in fstring_code and 'last_name[0]' in fstring_code and '.upper()' in fstring_code:
+                return True, "Correctly used f-string and methods."
+    return False, "💡 Hint: Make sure you are using an f-string with 'first_name[0].upper()' and 'last_name[0].upper()' inside a print() call."
+`
+                }
+            ],
             starter_code: `first_name = "ada"
 last_name = "lovelace"
 
@@ -124,6 +146,27 @@ hobby = "exploring"</code></pre>`,
 hobby = "exploring"
 print(f"{name} loves {hobby} — that's awesome!")`,
             hint: 'Use an f-string to build the sentence. Remember to place the variables `name` and `hobby` inside curly braces `{}` within the string.',
+            validation: [
+                {
+                    type: 'ast_check',
+                    script: `
+def check():
+    try:
+        tree = ast.parse(user_code)
+    except SyntaxError:
+        return False, "Your code has a syntax error."
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and getattr(node.func, 'id', '') == 'print':
+            if not (node.args and isinstance(node.args[0], ast.JoinedStr)):
+                continue
+            fstring_code = ast.unparse(node.args[0])
+            if '{name}' in fstring_code and '{hobby}' in fstring_code:
+                return True, "Correctly used variables in f-string."
+    return False, "💡 Hint: Make sure you are using an f-string with the {name} and {hobby} variables inside a print() call."
+`
+                }
+            ],
             starter_code: `name = "Zelda"
 hobby = "exploring"
 
@@ -144,6 +187,27 @@ verb = "sings"
 adverb = "loudly"
 print(f"The {adjective} {noun} {verb} {adverb}.")`,
             hint: 'Use an f-string to place the variables in the correct order. Don\'t forget the period at the end!',
+            validation: [
+                {
+                    type: 'ast_check',
+                    script: `
+def check():
+    try:
+        tree = ast.parse(user_code)
+    except SyntaxError:
+        return False, "Your code has a syntax error."
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and getattr(node.func, 'id', '') == 'print':
+            if not (node.args and isinstance(node.args[0], ast.JoinedStr)):
+                continue
+            fstring_code = ast.unparse(node.args[0])
+            if all(v in fstring_code for v in ['{adjective}', '{noun}', '{verb}', '{adverb}']):
+                return True, "Correctly used variables in f-string."
+    return False, "💡 Hint: Make sure you are using an f-string with all four variables inside a print() call."
+`
+                }
+            ],
             starter_code: `adjective = "happy"
 noun = "robot"
 verb = "sings"
@@ -162,6 +226,25 @@ count = 15</code></pre>`,
 count = 15
 print(symbol * count)`,
             hint: 'In Python, you can multiply a string by a number to repeat it. For example, "a" * 3 results in "aaa".',
+            validation: [
+                {
+                    type: 'ast_check',
+                    script: `
+def check():
+    try:
+        tree = ast.parse(user_code)
+    except SyntaxError:
+        return False, "Your code has a syntax error."
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Mult):
+            operands = {getattr(node.left, 'id', ''), getattr(node.right, 'id', '')}
+            if 'symbol' in operands and 'count' in operands:
+                return True, "Correctly used string multiplication."
+    return False, "💡 Hint: Make sure you are multiplying the 'symbol' and 'count' variables together."
+`
+                }
+            ],
             starter_code: `symbol = "#"
 count = 15
 
@@ -178,6 +261,25 @@ secret_password = "python"</code></pre>`,
 secret_password = "python"
 print(user_input.lower() == secret_password.lower())`,
             hint: 'Use the .lower() method on both strings before comparing them with the `==` operator.',
+            validation: [
+                {
+                    type: 'ast_check',
+                    script: `
+def check():
+    try:
+        tree = ast.parse(user_code)
+    except SyntaxError:
+        return False, "Your code has a syntax error."
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Compare):
+            # A bit simplified: check if .lower() is used anywhere in the code
+            if '.lower()' in user_code:
+                return True, "Correctly used the .lower() method."
+    return False, "💡 Hint: Remember to use the .lower() method to compare the strings."
+`
+                }
+            ],
             starter_code: `user_input = "PytHoN"
 secret_password = "python"
 
