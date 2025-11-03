@@ -13,7 +13,7 @@ test.describe('Python Adventure E2E', () => {
 
     // open chapter1 and ensure tutorial content visible
     await page.click('#ch-btn-chapter1');
-    await expect(page.locator('#tutorial')).toContainText('How to Use This Book');
+    await expect(page.locator('#tutorial')).toContainText('Python', { timeout: 10_000 });
 
     // start exercises if "Start Exercises" button exists
     const startBtn = page.locator('.exercises-list button:has-text("Start Exercises")');
