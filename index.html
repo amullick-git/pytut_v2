@@ -22,11 +22,43 @@
             background-color: #f8f9fa;
         }
         .sidebar {
-            background-color: #fff;
+            background-color: #fbfdff; /* Softer, slightly cool off-white */
             border-right: 1px solid #dee2e6;
             height: 100vh;
             position: sticky;
             top: 0;
+        }
+        .chapter-container {
+            border-bottom: 1px solid #dee2e6; /* Divider line */
+        }
+        .sidebar h4 {
+            font-weight: 600;
+            color: #495057;
+            letter-spacing: 0.5px;
+        }
+        #chapter-list .list-group-item {
+            font-weight: 500; /* Medium weight for chapter titles */
+            color: #343a40;
+            border: none; /* Remove default borders */
+            padding: 0.85rem 1.5rem; /* More vertical and horizontal space */
+            transition: background-color 0.2s ease-in-out;
+        }
+        #chapter-list .list-group-item.active {
+            background-color: #e7f5ff; /* Light blue background for active */
+            color: #0c63e4;
+            font-weight: 600; /* Bolder when active */
+            border-left: 4px solid #0c63e4; /* Accent border */
+            padding-left: calc(1.5rem - 4px); /* Adjust padding to align text */
+        }
+        #chapter-list .list-group-item:not(.active):hover {
+            background-color: #f1f3f5; /* Subtle hover for non-active items */
+        }
+        .sidebar .bi { /* Style for progress icons */
+            margin-right: 8px;
+            font-size: 0.9em;
+            vertical-align: middle;
+            position: relative;
+            top: -1px;
         }
         .tutorial-section {
             max-height: 800px;
@@ -111,12 +143,14 @@
             font-size: 1.2rem;
         }
         #section-list .list-group-item {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
+            border: none;
         }
         .section-list-for-chapter .list-group-item {
+            padding-top: 0.3rem; /* Reduced vertical padding */
+            padding-bottom: 0.3rem; /* Reduced vertical padding */
             padding-left: 2.5rem; /* Indent section links */
             font-size: 0.9rem;
+            color: #495057; /* Slightly lighter text for sections */
         }
     </style>
 </head>
@@ -218,13 +252,13 @@
 
             let marker = '';
             if (totalCount > 0) {
-                if (completedCount === totalCount) {
-                    marker = '✅ '; // All done
-                } else if (completedCount > 0) {
-                    marker = '✏️ '; // In progress
-                }
+                 if (completedCount === totalCount) {
+                    marker = '<i class="bi bi-check-circle-fill text-success"></i>'; // All done
+                 } else if (completedCount > 0) {
+                    marker = '<i class="bi bi-pencil-fill text-primary"></i>'; // In progress
+                 }
             }
-            chapterLink.innerHTML = marker + chapter.title;
+            chapterLink.innerHTML = marker + chapter.title.replace(/<br>.*$/, ''); // Use only main title
         }
 
         function highlightActiveChapter(chapterId) {
@@ -567,8 +601,8 @@ json.dumps((result_passed, result_message))
             chapterList.innerHTML = Object.keys(tutorialContent).map(key => {
                 const chapter = tutorialContent[key];
                 // Create a container for the chapter link and its future section list
-                return `
-                    <div>
+                 return `
+                    <div class="chapter-container">
                         <a href="#" id="ch-btn-${key}" class="list-group-item list-group-item-action" onclick="loadChapter('${key}'); highlightActiveChapter('${key}');">${chapter.title}</a>
                         <div id="sections-for-${key}" class="list-group list-group-flush section-list-for-chapter" style="display: none;"></div>
                     </div>`;
