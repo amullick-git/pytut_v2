@@ -291,6 +291,8 @@
 
         function loadChapter(chapterId) {
             currentChapter = chapterId;
+            localStorage.setItem('lastChapter', chapterId); // Save chapter
+            localStorage.removeItem('lastExercise'); // Clear last exercise
             const chapter = tutorialContent[chapterId];
 
             let chapterHtml = '';
@@ -396,6 +398,7 @@
         function loadExercise(exerciseId) {
             const chapter = tutorialContent[currentChapter];
             currentExercise = chapter.exercises.find(ex => ex.id === exerciseId);
+            localStorage.setItem('lastExercise', exerciseId); // Save exercise
             
             // Show and populate the exercise content area
             const exerciseContentDiv = document.getElementById('current-exercise-content');
@@ -642,9 +645,18 @@ json.dumps((result_passed, result_message))
             // Now that the links exist, update their markers
             Object.keys(tutorialContent).forEach(updateChapterMarker);
 
-            // Load chapter 1 by default
-            loadChapter('chapter1');
-            highlightActiveChapter('chapter1');
+            // Load the last visited chapter and exercise
+            const lastChapter = localStorage.getItem('lastChapter') || 'chapter1';
+            const lastExercise = localStorage.getItem('lastExercise');
+
+            loadChapter(lastChapter);
+            highlightActiveChapter(lastChapter);
+
+            // If there was a specific exercise open, load it
+            if (lastExercise) {
+                startExercises(); // Display the exercise buttons
+                loadExercise(lastExercise); // Load the specific exercise
+            }
         }
     </script>
 </body>
