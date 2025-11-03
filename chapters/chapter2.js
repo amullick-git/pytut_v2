@@ -24,6 +24,7 @@ export const chapter2 = {
         <pre><code>print("I am learning Python!")
 print('This is fun!')</code></pre>
 
+        <hr class="my-4">
         <h3>2: Talking with Words and Numbers 🔤+🔢</h3>
         <p>Python can talk about <strong>words</strong> (called <em>strings</em>) and <strong>numbers</strong> too!</p>
 
@@ -34,6 +35,7 @@ print('This is fun!')</code></pre>
 
         <p>It's like the computer is explaining what you asked — pretty smart, right?</p>
 
+        <hr class="my-4">
         <h3>3: Your Own Sentences ✍️</h3>
         <p>You can print multiple things in one line:</p>
 
@@ -42,6 +44,7 @@ print("I am", 10, "years old")</code></pre>
 
         <p>Python automatically adds spaces between the pieces.</p>
 
+        <hr class="my-4">
         <h3>4: Joining Words (String Concatenation) 🔗</h3>
         <p>This long word means "stick together."<br>
             You can glue words using the <strong><code>+</code></strong> sign:</p>
@@ -55,6 +58,7 @@ print("I am", 10, "years old")</code></pre>
             ⚠️ <strong>Careful!</strong> You must add spaces inside the quotes, or it'll look squished!
         </div>
 
+        <hr class="my-4">
         <h3>5: Saving Words for Later (Variables) 📦</h3>
         <p>Let's store a name inside a box (a variable) so you can use it again.</p>
 
@@ -64,6 +68,7 @@ print("Hello,", name)</code></pre>
         <p>Now, Python remembers your name!<br>
             You can reuse it anywhere in the program.</p>
 
+        <hr class="my-4">
         <h3>6: Making the Computer Listen 👂</h3>
         <p>Now let's let the computer ask <strong>you</strong> something.</p>
 
@@ -79,6 +84,7 @@ print(name, "likes the color", color)</code></pre>
 
         <p>Now you're having a real conversation with your program! 💬</p>
 
+        <hr class="my-4">
         <h3>7: The Power of F-Strings (Magic Blanks) ✨</h3>
         <p>There’s an easier and cooler way to mix words and variables: <strong>f-strings</strong> (they start with <code>f</code> before the quotes).</p>
         <pre><code>name = "Ari"
@@ -88,6 +94,7 @@ print(f"My name is {name}, and I am {age} years old!")</code></pre>
         You can even do math inside them:</p>
         <pre><code>print(f"Next year, I’ll be {age + 1} years old!")</code></pre>
 
+        <hr class="my-4">
         <h3>8: Changing Case ⬆️⬇️</h3>
         <p>You can make your text louder (uppercase) or softer (lowercase):</p>
         <pre><code>word = "Python"
@@ -96,6 +103,7 @@ print(word.lower())  # python</code></pre>
         <p>Or make only the first letter uppercase:</p>
         <pre><code>print(word.capitalize())  # Python</code></pre>
 
+        <hr class="my-4">
         <h3>9: Cleaning Up Extra Spaces 🧹</h3>
         <p>Sometimes when people type, they add extra spaces at the beginning or end by accident. Python can clean these up for you with <code>.strip()</code>!</p>
         <pre><code>messy_input = "   hello there   "

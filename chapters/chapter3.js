@@ -16,6 +16,7 @@ print(coins)
 print(player)</code></pre>
         <p>🪄 You just created two boxes—one named <code>coins</code>, one named <code>player</code>.</p>
 
+        <hr class="my-4">
         <h3>2: Naming Your Boxes</h3>
         <p>Variable names can be almost anything you like—but they must follow the rules:</p>
         <ul>
@@ -25,6 +26,7 @@ print(player)</code></pre>
             <li>Python is <strong>case-sensitive</strong> → <code>Name</code> ≠ <code>name</code>.</li>
         </ul>
 
+        <hr class="my-4">
         <h3>3: Variables Can Change</h3>
         <p>You can change what’s inside the box at any time:</p>
         <pre><code>coins = 10
@@ -33,6 +35,7 @@ coins = coins + 5
 print(coins)</code></pre>
         <p>✨ The box <code>coins</code> first held 10, now it holds 15. That’s why they’re called <strong>variables</strong>—their value can <em>vary</em>!</p>
 
+        <hr class="my-4">
         <h3>4: Different Kinds of Boxes (Data Types)</h3>
         <p>Python boxes can hold different kinds of treasures—called <strong>types</strong>.</p>
         <ul>
@@ -46,6 +49,7 @@ height = 1.42           # float
 name = "Ari"            # str
 has_sword = True        # bool</code></pre>
 
+        <hr class="my-4">
         <h3>5: Mixing Types (and Why It Matters)</h3>
         <p>You can do math with numbers, but what happens if you mix types?</p>
         <pre><code>age = 10
@@ -55,6 +59,7 @@ print("I am " + age + " years old")  # ❌ Error!</code></pre>
 print("I am " + str(age) + " years old")  # ✅
 print(f"I am {age} years old")  # ✅ Also great!</code></pre>
 
+        <hr class="my-4">
         <h3>6: Shortcuts in Math (Operators)</h3>
         <pre><code>coins = 10
 coins += 5   # same as coins = coins + 5
@@ -63,6 +68,7 @@ coins *= 3   # multiply
 coins /= 4   # divide</code></pre>
         <p>These shortcuts make your code tidy and quick!</p>
 
+        <hr class="my-4">
         <h3>7: Turning One Type into Another (Casting)</h3>
         <p>Sometimes, you’ll want to convert between types.</p>
         <pre><code>num_as_string = "42"
