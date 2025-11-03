@@ -1,4 +1,4 @@
-console.log("Loading chapter3.js...");
+console.log("Loading chapter3.js..."); // eslint-disable-line no-console
 
 export const chapter3 = {
     title: "The Treasure Boxes 💎📦<br><small class='text-muted'>Variables & Types</small>",
@@ -22,14 +22,23 @@ print(player)</code></pre>
         `},
         {
             title: "2: Naming Your Boxes",
-            content: `<p>Variable names can be almost anything you like—but they must follow the rules:</p>
+            content: `<p>Variable names can be almost anything you like, but they must follow a few rules:</p>
         <ul>
-            <li>Use <strong>letters</strong>, <strong>numbers</strong>, or <strong>underscores</strong>.</li>
-            <li>Can’t start with a number.</li>
-            <li>No spaces! (use <code>_</code> instead)</li>
-            <li>Python is <strong>case-sensitive</strong> → <code>Name</code> ≠ <code>name</code>.</li>
+            <li>Must start with a letter (<code>a-z</code>, <code>A-Z</code>) or an underscore (<code>_</code>).</li>
+            <li>The rest of the name can contain letters, numbers, or underscores.</li>
+            <li>No spaces or special characters like <code>!</code>, <code>@</code>, <code>#</code>, <code>$</code>.</li>
+            <li>They are <strong>case-sensitive</strong>, so <code>name</code> and <code>Name</code> are different variables.</li>
         </ul>
-
+        <div class="row">
+            <div class="col-md-6">
+                <p class="text-success">✅ Good Names:</p>
+                <pre><code>player_score\nlevel_3\nsecret_key</code></pre>
+            </div>
+            <div class="col-md-6">
+                <p class="text-danger">❌ Bad Names:</p>
+                <pre><code>3rd_level  # Starts with a number\nplayer score # Contains a space</code></pre>
+            </div>
+        </div>
         `},
         {
             title: "3: Variables Can Change",
@@ -50,10 +59,11 @@ print(coins)</code></pre>
             <li><code>bool</code>: Yes/No values like <code>True</code> or <code>False</code>.</li>
         </ul>
         <pre><code>coins = 12              # int
-height = 1.42           # float
-name = "Ari"            # str
-has_sword = True        # bool</code></pre>
-
+height = 1.42           # float (for decimals)
+name = "Ari"            # str (for text)
+has_sword = True        # bool (for True/False)</code></pre>
+        <p>You can ask Python what type a variable is using the <code>type()</code> function:</p>
+        <pre><code>print(type(coins))  # Output: &lt;class 'int'&gt;</code></pre>
         `},
         {
             title: "5: Mixing Types (and Why It Matters)",
@@ -79,9 +89,9 @@ coins /= 4   # divide</code></pre>
             content: `<p>Sometimes, you’ll want to convert between types.</p>
         <pre><code>num_as_string = "42"
 num_as_int = int(num_as_string)
-print(num_as_int * 2) # Output: 84</code></pre>
-    `}
-    ], // <-- The comma was moved here, after the closing brace of the last object.
+print(num_as_int * 2) # Output: 84</code></pre>`
+        }
+    ],
     exercises: [
         {
             id: 'circle_area',
@@ -200,7 +210,127 @@ def check():
 # Your code here to check if the answer is "yes"
 # and print the boolean result.`
         }
+        ,
+        {
+            id: 'item_cost_calculator',
+            title: 'Item Cost Calculator',
+            description: `<p>You're buying 3 potions that cost "15.5" gold each. The price is given as a string. 🧪</p>
+<p>Calculate the total cost and print it in a user-friendly message: "Total cost: 46.5 gold"</p>
+<pre><code>item_price_str = "15.5"
+quantity = 3</code></pre>`,
+            solution: `item_price_str = "15.5"
+quantity = 3
+item_price_float = float(item_price_str)
+total_cost = item_price_float * quantity
+print(f"Total cost: {total_cost} gold")`,
+            validation: [
+                {
+                    type: 'ast_check',
+                    script: `
+def check():
+    try:
+        tree = ast.parse(user_code)
+    except SyntaxError:
+        return False, "Your code has a syntax error."
+
+    has_float_cast = any(isinstance(node, ast.Call) and getattr(node.func, 'id', '') == 'float' for node in ast.walk(tree))
+    if not has_float_cast:
+        return False, "💡 Hint: Did you remember to convert the price from a string to a number using float()?"
+
+    return True, "Correctly used float() to convert the price."
+`
+                }
+            ],
+            hint: 'First, convert `item_price_str` to a number using `float()`. Then, multiply it by the `quantity`. Finally, use an f-string to print the result.',
+            starter_code: `item_price_str = "15.5"
+quantity = 3
+
+# Your code here to calculate and print the total cost.`
+        }
+        ,
+        {
+            id: 'potion_distribution',
+            title: 'Potion Distribution',
+            description: `<p>You have 17 health potions to distribute among 5 adventurers. 🧙‍♂️</p>
+<p>Calculate how many potions each adventurer gets and how many are left over. This requires two special operators:</p>
+<ul>
+    <li><code>//</code> (Integer Division): Divides and rounds down to the nearest whole number.</li>
+    <li><code>%</code> (Modulo): Gives you the remainder of a division.</li>
+</ul>
+<pre><code>potions = 17
+adventurers = 5
+adventurers = 5</code></pre>`,
+            solution: `potions = 17
+adventurers = 5
+potions_per_adventurer = potions // adventurers
+leftover_potions = potions % adventurers
+print(f"Each adventurer gets {potions_per_adventurer} potions.")
+print(f"There are {leftover_potions} potions left over.")`,
+            validation: [
+                {
+                    type: 'ast_check',
+                    script: `
+def check():
+    try:
+        tree = ast.parse(user_code)
+    except SyntaxError:
+        return False, "Your code has a syntax error."
+
+    has_floor_div = any(isinstance(node, ast.FloorDiv) for node in ast.walk(tree))
+    has_mod = any(isinstance(node, ast.Mod) for node in ast.walk(tree))
+
+    if not has_floor_div:
+        return False, "💡 Hint: Did you use the integer division operator (//) to see how many potions each adventurer gets?"
+    if not has_mod:
+        return False, "💡 Hint: Don't forget to use the modulo operator (%) to find the leftover potions."
+
+    return True, "Great use of // and % operators!"
+`
+                }
+            ],
+            hint: 'Use `//` to find how many whole potions each person gets. Use `%` to find what is remaining.',
+            starter_code: `potions = 17
+adventurers = 5
+
+# Your code here to calculate and print the distribution.`
+        },
+        {
+            id: 'level_up',
+            title: 'Level Up!',
+            description: `<p>A player's level is stored in a string. You need to extract the number, add 1 to it, and announce their new level. 🚀</p>
+<p>The final output should be: "Level up! You are now level 9."</p>
+<pre><code>level_string = "Level: 8"</code></pre>`,
+            solution: `level_string = "Level: 8"
+level_number_str = level_string.split(": ")[1]
+level_number_int = int(level_number_str)
+new_level = level_number_int + 1
+print(f"Level up! You are now level {new_level}.")`,
+            validation: [
+                {
+                    type: 'ast_check',
+                    script: `
+def check():
+    try:
+        tree = ast.parse(user_code)
+    except SyntaxError:
+        return False, "Your code has a syntax error."
+
+    has_split = any('.split(' in ast.unparse(node) for node in ast.walk(tree) if isinstance(node, ast.Call))
+    has_int_cast = any(isinstance(node, ast.Call) and getattr(node.func, 'id', '') == 'int' for node in ast.walk(tree))
+
+    if not has_split:
+        return False, "💡 Hint: Try using the .split() method to separate the text from the number."
+    if not has_int_cast:
+        return False, "💡 Hint: After you get the number as a string, did you remember to convert it to an integer using int()?"
+
+    return True, "Excellent! You combined string splitting and type casting."
+`
+                }
+            ],
+            hint: 'First, use `.split(": ")[1]` to get the number part of the string. Then, convert that part to an integer with `int()`. Finally, add 1 and print the result in an f-string.',
+            starter_code: `level_string = "Level: 8"
+
+# Your code here to extract, increment, and print the new level.`
+        }
     ]
 };
-
-console.log("chapter3 object:", chapter3);
