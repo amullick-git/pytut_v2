@@ -15,12 +15,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'npm'                         # <-- enable npm caching
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install dependencies
         # If package-lock.json is missing, fall back to `npm install`
         run: npm ci || npm install
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            playwright-browsers-${{ runner.os }}-
+
       - name: Install Playwright browsers
+        # Skip if cache was hit to avoid re-downloading heavy browser artifacts
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
       - name: Run E2E tests
