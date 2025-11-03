@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Adventure: Learn to Code</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script type="module">
+        import { tutorialContent } from './tutorial.js';
+        window.tutorialContent = tutorialContent;
+        
+        // Move initialization to after module loads
+        window.addEventListener('load', function() {
+            initPyodide();
+            loadTutorialContent();
+        });
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .tutorial-section {
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        #editor {
+            width: 100%;
+            height: 200px;
+            font-family: monospace;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        #output {
+            width: 100%;
+            min-height: 100px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .exercise {
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #f8f9fa;
+        }
+        .exercise pre {
+            white-space: pre-wrap; /* Allows text to wrap */
+            word-wrap: break-word; /* Breaks long words if necessary */
+        }
+        .chapter-nav {
+            margin-bottom: 20px;
+        }
+        .exercises-list .btn.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Python Adventure: Learn to Code</h1>
+        
+        <div class="chapter-nav mb-4">
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="loadChapter('chapter1')">Chapter 1</button>
+                <button class="btn btn-primary" onclick="loadChapter('chapter2')">Chapter 2</button>
+                <button class="btn btn-primary" onclick="loadChapter('chapter3')">Chapter 3</button>
+                <!-- Add buttons for all chapters -->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="tutorial-section" id="tutorial">
+                    <!-- Tutorial content loads here -->
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="exercise-section mt-4">
+                    <h3>Exercises</h3>
+                    <div class="exercises-list mb-3">
+                        <!-- Exercise selection buttons load here -->
+                        <p>Select a chapter to see its exercises.</p>
+                    </div>
+                    <div id="current-exercise-content" class="exercise" style="display: none;">
+                        <!-- Exercise description loads here -->
+                    </div>
+                </div>
+
+                <div id="coding-section" class="coding-section" style="display: none;">
+                    <h3>Code Playground</h3>
+                    <textarea id="editor" placeholder="Type your Python code here..."></textarea>
+                    <div class="mb-2">
+                        <button class="btn btn-primary" onclick="runCode()">Run Code</button>
+                        <button class="btn btn-warning" onclick="checkExercise()">Check Exercise</button>
+                        <button class="btn btn-info" onclick="showHint()">Show Hint</button>
+                        <button id="btn-next-exercise" class="btn btn-success" onclick="loadNextExercise()" style="display: none;">Next Exercise</button>
+                    </div>
+                    <div id="output"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pyodide = null;
+        let currentChapter = 'chapter1';
+        let currentExercise = null;
+
+        async function initPyodide() {
+            pyodide = await loadPyodide();
+            document.getElementById('output').textContent = 'Python environment ready!';
+        }
+
+        function loadChapter(chapterId) {
+            currentChapter = chapterId;
+            const chapter = tutorialContent[chapterId];
+            document.getElementById('tutorial').innerHTML = chapter.content;
+            
+            // Load exercise buttons
+            const exercisesListDiv = document.querySelector('.exercises-list');
+            if (chapter.exercises && chapter.exercises.length > 0) {
+                exercisesListDiv.innerHTML = `<button class="btn btn-success" onclick="startExercises()">Start Exercises</button>`;
+            } else {
+                exercisesListDiv.innerHTML = `<p>No exercises for this chapter.</p>`;
+            }
+
+            // Reset exercise view
+            document.getElementById('current-exercise-content').style.display = 'none';
+            document.getElementById('editor').value = 'Select an exercise to start coding.';
+            document.getElementById('output').textContent = '';
+            currentExercise = null;
+            document.getElementById('btn-next-exercise').style.display = 'none';
+            document.getElementById('coding-section').style.display = 'none';
+        }
+
+        function startExercises() {
+            const chapter = tutorialContent[currentChapter];
+            if (!chapter.exercises || chapter.exercises.length === 0) return;
+
+            // Replace "Start" button with the list of exercise buttons
+            const exercisesListDiv = document.querySelector('.exercises-list');
+            exercisesListDiv.innerHTML = chapter.exercises.map(ex => 
+                `<button class="btn btn-outline-primary m-1" id="btn-ex-${ex.id}" onclick="loadExercise('${ex.id}')">${ex.title}</button>`
+            ).join('');
+
+            // Automatically load the first exercise
+            loadExercise(chapter.exercises[0].id);
+        }
+
+        function loadExercise(exerciseId) {
+            // Show the coding section now that an exercise is active
+            document.getElementById('coding-section').style.display = 'block';
+
+            const chapter = tutorialContent[currentChapter];
+            currentExercise = chapter.exercises.find(ex => ex.id === exerciseId);
+            
+            // Show and populate the exercise content area
+            const exerciseContentDiv = document.getElementById('current-exercise-content');
+            exerciseContentDiv.style.display = 'block';
+            exerciseContentDiv.innerHTML = `
+                <h4>${currentExercise.title}</h4>
+                <pre>${currentExercise.description}</pre>
+            `;
+            document.getElementById('editor').value = currentExercise.starter_code || '';
+            document.getElementById('output').textContent = '';
+
+            // Update active button
+            document.querySelectorAll('.exercises-list .btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-ex-${exerciseId}`).classList.add('active');
+
+            // Show/hide the 'Next Exercise' button
+            const nextButton = document.getElementById('btn-next-exercise');
+            const exercises = chapter.exercises;
+            const currentIndex = exercises.findIndex(ex => ex.id === currentExercise.id);
+            if (currentIndex !== -1 && currentIndex < exercises.length - 1) {
+                nextButton.style.display = 'inline-block';
+            } else {
+                nextButton.style.display = 'none';
+            }
+        }
+
+        function loadNextExercise() {
+            if (!currentChapter || !currentExercise) {
+                alert("Please select an exercise first.");
+                return;
+            }
+
+            const chapter = tutorialContent[currentChapter];
+            const exercises = chapter.exercises;
+            const currentIndex = exercises.findIndex(ex => ex.id === currentExercise.id);
+
+            if (currentIndex !== -1 && currentIndex < exercises.length - 1) {
+                // Load the next exercise in the current chapter
+                const nextExercise = exercises[currentIndex + 1];
+                loadExercise(nextExercise.id);
+            } else {
+                alert("You've reached the last exercise of this chapter!");
+            }
+        }
+
+        function showHint() {
+            if (currentExercise) {
+                alert(currentExercise.hint);
+            }
+        }
+
+        async function runCode() {
+            if (!pyodide) return;
+            const code = document.getElementById('editor').value;
+            let output = '';
+            
+            try {
+                pyodide.runPython(`
+                    import io, sys
+                    sys.stdout = io.StringIO()
+                `);
+                
+                await pyodide.runPythonAsync(code);
+                output = pyodide.runPython("sys.stdout.getvalue()");
+            } catch (error) {
+                output = 'Error: ' + error.message;
+            }
+            
+            document.getElementById('output').textContent = output;
+            return output;
+        }
+
+        async function checkExercise() {
+            if (!currentExercise) {
+                alert('Please select an exercise first!');
+                return;
+            }
+            
+            const output = await runCode();
+            const expectedOutput = await runSolution(currentExercise.solution);
+            const isCorrect = output.trim() === expectedOutput.trim();
+            
+            document.getElementById('output').textContent += 
+                '\n\n' + (isCorrect ? '✅ Correct!' : '❌ Try again!');
+        }
+
+        async function runSolution(solution) {
+            pyodide.runPython(`
+                import io, sys
+                sys.stdout = io.StringIO()
+            `);
+            await pyodide.runPythonAsync(solution);
+            return pyodide.runPython("sys.stdout.getvalue()");
+        }
+
+        function loadTutorialContent() {
+            const tutorialDiv = document.getElementById('tutorial');
+            // Load initial content showing book introduction
+            tutorialDiv.innerHTML = `
+                <h2>Python Adventure: Learn to Code (Ages ~9–11)</h2>
+                <p>A story‑driven, hands‑on journey through Python for curious kids! Each chapter mixes storytelling, step‑by‑step explanations, fun examples, and challenges. Every topic comes alive with colorful analogies and creative exercises.</p>
+                
+                <h3>How to Use This Book</h3>
+                <ul>
+                    <li><strong>Work a little each day</strong> (20–30 minutes is perfect).</li>
+                    <li><strong>Type every example</strong> — that's how you learn!</li>
+                    <li><strong>Try before looking at answers.</strong></li>
+                    <li><strong>Earn badges</strong> for finishing chapters.</li>
+                    <li><strong>Ask questions!</strong> Python loves curious minds.</li>
+                </ul>
+
+                <h3>Choose a chapter to begin!</h3>
+            `;
+        }
+    </script>
+</body>
+</html>
