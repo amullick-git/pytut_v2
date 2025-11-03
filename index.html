@@ -199,6 +199,26 @@
             localStorage.setItem('pythonAdventureProgress', JSON.stringify(progress));
         }
 
+        function updateChapterMarker(chapterId) {
+            const chapterLink = document.getElementById(`ch-btn-${chapterId}`);
+            if (!chapterLink) return;
+
+            const chapter = tutorialContent[chapterId];
+            const progress = getProgress();
+            const completedCount = (progress[chapterId] || []).length;
+            const totalCount = chapter.exercises ? chapter.exercises.length : 0;
+
+            let marker = '';
+            if (totalCount > 0) {
+                if (completedCount === totalCount) {
+                    marker = '✅ '; // All done
+                } else if (completedCount > 0) {
+                    marker = '✏️ '; // In progress
+                }
+            }
+            chapterLink.innerHTML = marker + chapter.title;
+        }
+
         function highlightActiveChapter(chapterId) {
             document.querySelectorAll('#chapter-list .list-group-item').forEach(item => item.classList.remove('active'));
             document.getElementById(`ch-btn-${chapterId}`).classList.add('active');
@@ -253,8 +273,8 @@
             const exercisesListDiv = document.querySelector('.exercises-list');
             exercisesListDiv.innerHTML = chapter.exercises.map(ex => {
                 const isDone = completedExercises.includes(ex.id);
-                const doneMarker = isDone ? ' ✅' : '';
-                return `<button class="btn btn-outline-primary m-1" id="btn-ex-${ex.id}" onclick="loadExercise('${ex.id}')">${ex.title}${doneMarker}</button>`;
+                const doneMarker = isDone ? '✅ ' : '';
+                return `<button class="btn btn-outline-primary m-1" id="btn-ex-${ex.id}" onclick="loadExercise('${ex.id}')">${doneMarker}${ex.title}</button>`;
             }).join('');
 
             // Automatically load the first exercise
@@ -291,6 +311,16 @@
             // Update active button
             document.querySelectorAll('.exercises-list .btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn-ex-${exerciseId}`).classList.add('active');
+
+            // Add 'in-progress' marker (✏️)
+            document.querySelectorAll('.exercises-list .btn').forEach(btn => {
+                // Remove marker from all buttons first
+                btn.innerHTML = btn.innerHTML.replace('✏️ ', '');
+            });
+            const currentButton = document.getElementById(`btn-ex-${exerciseId}`);
+            if (currentButton && !currentButton.innerHTML.includes('✅')) {
+                currentButton.innerHTML = '✏️ ' + currentButton.innerHTML;
+            }
 
             // Show/hide the 'Next Exercise' button
             const nextButton = document.getElementById('btn-next-exercise');
@@ -415,9 +445,13 @@
                 summaryMessage = '\n\n🎉 Great job! All checks passed!';
                 saveProgress(currentChapter, currentExercise.id);
                 const button = document.getElementById(`btn-ex-${currentExercise.id}`);
-                if (button && !button.innerHTML.includes('✅')) {
-                    button.innerHTML += ' ✅';
+                if (button) {
+                    button.innerHTML = button.innerHTML.replace('✏️ ', '');
+                    if (!button.innerHTML.includes('✅')) {
+                        button.innerHTML = '✅ ' + button.innerHTML;
+                    }
                 }
+                updateChapterMarker(currentChapter); // Update chapter status in sidebar
             } else {
                 summaryMessage = '\n\n🤔 Not quite there yet. Review the feedback below and try again!';
             }
@@ -485,10 +519,15 @@ json.dumps((result_passed, result_message))
 
             // Dynamically load chapters into the sidebar
             const chapterList = document.getElementById('chapter-list');
+            const progress = getProgress();
             chapterList.innerHTML = Object.keys(tutorialContent).map(key => {
                 const chapter = tutorialContent[key];
+                // Create the link with the title already inside
                 return `<a href="#" id="ch-btn-${key}" class="list-group-item list-group-item-action" onclick="loadChapter('${key}'); highlightActiveChapter('${key}');">${chapter.title}</a>`;
             }).join('');
+
+            // Now that the links exist, update their markers
+            Object.keys(tutorialContent).forEach(updateChapterMarker);
 
             // Load chapter 1 by default
             loadChapter('chapter1');
