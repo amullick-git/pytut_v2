@@ -75,7 +75,10 @@ print("Hello,", name)</code></pre>
         <pre><code>name = input("What is your name? ")
 print("Nice to meet you,", name)</code></pre>
 
-        <p>Whatever you type after the question is saved in the variable <code>name</code>.</p>
+        <p>Whatever you type after the question is saved in the variable <code>name</code>.
+        <br>
+        💡 <strong>Important:</strong> The <code>input()</code> function always gives you back a <strong>string</strong>, even if you type a number!
+        </p>
 
         <p>🪄 Try adding another question:</p>
 
@@ -118,7 +121,8 @@ Clean: 'hello there'</pre>
         <div class="alert alert-info mt-3">
             ✨ This is very useful with <code>input()</code> to make sure you get just the text you need. For example, if a user types " yes " instead of "yes", <code>strip()</code> will fix it!
         </div>
-        <pre><code>answer = input("Do you like ice cream? (yes/no) ")
+        <pre><code># Chaining methods: first strip, then lower
+answer = input("Do you like ice cream? (yes/no) ")
 if answer.strip().lower() == "yes":
     print("Me too! 🍦")</code></pre>
     `,
@@ -281,12 +285,12 @@ count = 15
             title: 'Secret Password Check',
             description: `<p>A user entered a password, but we need to check it without worrying about capitalization. 🤫</p>
 <p>Compare the <code>user_input</code> to the <code>secret_password</code> to see if they match when both are lowercase. Print <code>True</code> if they match, <code>False</code> otherwise.</p>
-<pre><code>user_input = "PytHoN"
-secret_password = "python"</code></pre>`,
-            solution: `user_input = "PytHoN"
-secret_password = "python"
+<pre><code>user_input = "  PytHoN  "
+secret_password = "pYThOn"</code></pre>`,
+            solution: `user_input = "  PytHoN  "
+secret_password = "pYThOn"
 print(user_input.lower() == secret_password.lower())`,
-            hint: 'Use the .lower() method on both strings before comparing them with the `==` operator.',
+            hint: 'Use the .lower() method on both strings before comparing them with the `==` operator. What about the extra spaces in the user input?',
             validation: [
                 {
                     type: 'ast_check',
@@ -299,15 +303,15 @@ def check():
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Compare):
-            # A bit simplified: check if .lower() is used anywhere in the code
-            if '.lower()' in user_code:
-                return True, "Correctly used the .lower() method."
-    return False, "💡 Hint: Remember to use the .lower() method to compare the strings."
+            # A bit simplified: check if .lower() is used on both sides
+            if '.lower()' in ast.unparse(node.left) and '.lower()' in ast.unparse(node.comparators[0]):
+                return True, "Correctly used the .lower() method on both variables."
+    return False, "💡 Hint: Remember to use the .lower() method on both variables to compare them."
 `
                 }
             ],
-            starter_code: `user_input = "PytHoN"
-secret_password = "python"
+            starter_code: `user_input = "  PytHoN  "
+secret_password = "pYThOn"
 
 # Your code here to check if the passwords match
 # when both are converted to lowercase.`
