@@ -8,18 +8,18 @@ export const chapter3 = {
             </p>
         </div>
 
-        <h3>Step 1: Your First Treasure Box 📦</h3>
+        <h3>1: Your First Treasure Box 📦</h3>
         <pre><code>age = 11
 print("I am", age, "years old")</code></pre>
 
-        <h3>Step 2: The Magic of Strings 📜</h3>
+        <h3>2: The Magic of Strings 📜</h3>
         <pre><code>greeting = "Hello, adventurer!"
 print(greeting)</code></pre>
 
-        <h3>Step 3: Numbers are Treasures Too! 🪙</h3>
+        <h3>3: Numbers are Treasures Too! 🪙</h3>
         <pre><code>print("In 5 years, I will be", 11 + 5, "years old")</code></pre>
 
-        <h3>Step 4: The Great Switcheroo (True/False) 🎚️</h3>
+        <h3>4: The Great Switcheroo (True/False) 🎚️</h3>
         <pre><code>is_adventurer = True
 print("Are you an adventurer?", is_adventurer)</code></pre>
     `,

@@ -249,7 +249,7 @@
             exerciseContentDiv.style.display = 'block';
             exerciseContentDiv.innerHTML = `
                 <h4>${currentExercise.title}</h4>
-                <pre>${currentExercise.description}</pre>
+                <div>${currentExercise.description}</div>
             `;
             document.getElementById('editor').value = currentExercise.starter_code || '';
             document.getElementById('output').textContent = '';
