@@ -16,6 +16,7 @@
         });
     </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         .tutorial-section {
             max-height: 600px;
@@ -62,6 +63,19 @@
             background-color: #0d6efd;
             color: white;
         }
+        .hint-container {
+            background-color: #eef2f7; /* A softer blue */
+            border-left: 5px solid #0d6efd; /* A prominent left border */
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            display: flex; /* Use flexbox for alignment */
+            align-items: center;
+            gap: 10px; /* Space between icon and text */
+        }
+        .hint-container i {
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 <body>
@@ -94,15 +108,21 @@
                     <div id="current-exercise-content" class="exercise" style="display: none;">
                         <!-- Exercise description loads here -->
                     </div>
+                    <div id="hint-section" style="display: none;">
+                        <button class="btn btn-info mt-2" onclick="showHint()">Show Hint</button>
+                        <div id="hint-box" class="hint-container" style="display: none;">
+                            <i class="bi bi-lightbulb-fill"></i>
+                            <span id="hint-text"></span>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="coding-section" class="coding-section" style="display: none;">
+                <div id="coding-section" class="coding-section mt-4" style="display: none;">
                     <h3>Code Playground</h3>
                     <textarea id="editor" placeholder="Type your Python code here..."></textarea>
                     <div class="mb-2">
                         <button class="btn btn-primary" onclick="runCode()">Run Code</button>
                         <button class="btn btn-warning" onclick="checkExercise()">Check Exercise</button>
-                        <button class="btn btn-info" onclick="showHint()">Show Hint</button>
                         <button id="btn-next-exercise" class="btn btn-success" onclick="loadNextExercise()" style="display: none;">Next Exercise</button>
                     </div>
                     <div id="output"></div>
@@ -141,6 +161,7 @@
             currentExercise = null;
             document.getElementById('btn-next-exercise').style.display = 'none';
             document.getElementById('coding-section').style.display = 'none';
+            document.getElementById('hint-section').style.display = 'none';
         }
 
         function startExercises() {
@@ -173,6 +194,16 @@
             `;
             document.getElementById('editor').value = currentExercise.starter_code || '';
             document.getElementById('output').textContent = '';
+
+            // Show hint section if a hint exists, but hide the hint box itself
+            const hintSection = document.getElementById('hint-section');
+            if (currentExercise.hint) {
+                hintSection.style.display = 'block';
+                document.getElementById('hint-box').style.display = 'none';
+                document.getElementById('hint-text').textContent = '';
+            } else {
+                hintSection.style.display = 'none';
+            }
 
             // Update active button
             document.querySelectorAll('.exercises-list .btn').forEach(btn => btn.classList.remove('active'));
@@ -209,8 +240,16 @@
         }
 
         function showHint() {
-            if (currentExercise) {
-                alert(currentExercise.hint);
+            if (currentExercise && currentExercise.hint) {
+                const hintBox = document.getElementById('hint-box');
+                const hintText = document.getElementById('hint-text');
+                // Toggle hint visibility
+                if (hintBox.style.display === 'none') {
+                    hintText.textContent = currentExercise.hint;
+                    hintBox.style.display = 'flex';
+                } else {
+                    hintBox.style.display = 'none';
+                }
             }
         }
 
