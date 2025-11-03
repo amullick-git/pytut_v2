@@ -626,24 +626,6 @@ json.dumps((result_passed, result_message))
         }
 
         function loadTutorialContent() {
-            const tutorialDiv = document.getElementById('tutorial');
-            // Load initial content showing book introduction
-            tutorialDiv.innerHTML = `
-                <h2>Python Adventure: Learn to Code (Ages ~9–11)</h2>
-                <p>A story‑driven, hands‑on journey through Python for curious kids! Each chapter mixes storytelling, step‑by‑step explanations, fun examples, and challenges. Every topic comes alive with colorful analogies and creative exercises.</p>
-                
-                <h3>How to Use This Book</h3>
-                <ul>
-                    <li><strong>Work a little each day</strong> (20–30 minutes is perfect).</li>
-                    <li><strong>Type every example</strong> — that's how you learn!</li>
-                    <li><strong>Try before looking at answers.</strong></li>
-                    <li><strong>Earn badges</strong> for finishing chapters.</li>
-                    <li><strong>Ask questions!</strong> Python loves curious minds.</li>
-                </ul>
-
-                <h3>Choose a chapter to begin!</h3>
-            `;
-
             // Dynamically load chapters into the sidebar
             const chapterList = document.getElementById('chapter-list');
             const progress = getProgress();
