@@ -21,6 +21,10 @@
         body {
             background-color: #f8f9fa;
         }
+        main {
+            background-color: #f0f2f5; /* A slightly darker, neutral background for the main area */
+            padding-top: 1.5rem !important;
+        }
         .sidebar {
             background-color: #fbfdff; /* Softer, slightly cool off-white */
             border-right: 1px solid #dee2e6;
@@ -62,23 +66,26 @@
         }
         .tutorial-section {
             max-height: 800px;
-            overflow-y: auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            overflow-y: auto; /* Keep scrolling for long content */
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
         .code-wrapper {
             position: relative;
         }
-        .copy-btn {
+        .code-actions {
             position: absolute;
             top: 0.5rem;
             right: 0.5rem;
             opacity: 0;
             transition: opacity 0.2s ease-in-out;
+            display: flex;
+            gap: 0.5rem;
         }
-        .code-wrapper:hover .copy-btn {
+        .code-wrapper:hover .code-actions {
             opacity: 1;
         }
         .tutorial-section pre {
@@ -100,6 +107,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             padding: 10px;
+            transition: box-shadow 0.2s ease-in-out; /* For flash effect */
         }
         #output {
             width: 100%;
@@ -110,17 +118,33 @@
             background-color: #f8f9fa;
             font-family: monospace;
             white-space: pre-wrap;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
         .exercise {
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 10px 0;
-            background-color: #f8f9fa;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
         .exercise pre {
             white-space: pre-wrap; /* Allows text to wrap */
             word-wrap: break-word; /* Breaks long words if necessary */
+        }
+        .interactive-zone {
+            background-color: #fbfdff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .exercises-list .btn {
+            border-radius: 20px; /* Pill-shaped buttons */
+            font-weight: 500;
+        }
+        .exercises-list .btn.active {
+            background-color: #0d6efd;
+            color: white;
+            box-shadow: 0 2px 4px rgba(13,110,253,0.3);
         }
         .chapter-nav {
             margin-bottom: 20px;
@@ -173,15 +197,15 @@
                     <h1 class="h2">Python Adventure: Learn to Code</h1>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="tutorial-section" id="tutorial">
-                            <!-- Tutorial content loads here -->
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="exercise-section">
+                <!-- Tutorial Content Area -->
+                <div class="tutorial-section" id="tutorial">
+                    <!-- Tutorial content loads here -->
+                </div>
+                
+                <!-- Interactive Zone for Exercises and Code -->
+                <div class="interactive-zone">
+                    <div class="row">
+                        <div class="col-lg-6">
                             <h3>Exercises</h3>
                             <div class="exercises-list mb-3">
                                 <!-- Exercise selection buttons load here -->
@@ -198,8 +222,7 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div id="coding-section" class="coding-section mt-4">
+                        <div class="col-lg-6 mt-4 mt-lg-0">
                             <h3>Code Playground</h3>
                             <textarea id="editor" placeholder="Try some python code here ..."></textarea>
                             <div class="mb-2">
@@ -292,15 +315,26 @@
                 const wrapper = document.createElement('div');
                 wrapper.className = 'code-wrapper';
 
+                const actionsWrapper = document.createElement('div');
+                actionsWrapper.className = 'code-actions';
+
+                const tryButton = document.createElement('button');
+                tryButton.className = 'btn btn-sm btn-primary';
+                tryButton.innerHTML = '<i class="bi bi-play-circle"></i> Try It';
+                tryButton.title = 'Send to Playground';
+                tryButton.onclick = (e) => sendToPlayground(pre);
+
                 const copyButton = document.createElement('button');
-                copyButton.className = 'btn btn-sm btn-secondary copy-btn';
+                copyButton.className = 'btn btn-sm btn-secondary';
                 copyButton.innerHTML = '<i class="bi bi-clipboard"></i>';
                 copyButton.title = 'Copy to clipboard';
                 copyButton.onclick = (e) => copyCodeToClipboard(e, pre);
 
                 pre.parentNode.insertBefore(wrapper, pre);
                 wrapper.appendChild(pre);
-                wrapper.appendChild(copyButton);
+                actionsWrapper.appendChild(tryButton);
+                actionsWrapper.appendChild(copyButton);
+                wrapper.appendChild(actionsWrapper);
             });
             
             // Load exercise and section lists
@@ -442,6 +476,21 @@
                     hintBox.style.display = 'none';
                 }
             }
+        }
+
+        function sendToPlayground(preElement) {
+            const code = preElement.querySelector('code')?.innerText || preElement.innerText;
+            const editor = document.getElementById('editor');
+            editor.value = code;
+
+            // Scroll to the editor and give it focus
+            editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Flash the editor to provide visual feedback
+            editor.style.boxShadow = '0 0 0 2px rgba(13, 110, 253, 0.5)';
+            setTimeout(() => {
+                editor.style.boxShadow = '';
+            }, 500);
         }
 
         function copyCodeToClipboard(event, preElement) {
