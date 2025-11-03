@@ -18,6 +18,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background-color: #fff;
+            border-right: 1px solid #dee2e6;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+        }
         .tutorial-section {
             max-height: 600px;
             overflow-y: auto;
@@ -79,55 +89,63 @@
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <h1>Python Adventure: Learn to Code</h1>
-        
-        <div class="chapter-nav mb-4">
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="loadChapter('chapter1')">Chapter 1</button>
-                <button class="btn btn-primary" onclick="loadChapter('chapter2')">Chapter 2</button>
-                <button class="btn btn-primary" onclick="loadChapter('chapter3')">Chapter 3</button>
-                <!-- Add buttons for all chapters -->
-            </div>
-        </div>
-
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6">
-                <div class="tutorial-section" id="tutorial">
-                    <!-- Tutorial content loads here -->
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar p-0">
+                <div class="position-sticky">
+                    <h4 class="px-3 pt-3">Chapters</h4>
+                    <div id="chapter-list" class="list-group list-group-flush">
+                        <!-- Chapter links will be loaded here -->
+                    </div>
                 </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="exercise-section mt-4">
-                    <h3>Exercises</h3>
-                    <div class="exercises-list mb-3">
-                        <!-- Exercise selection buttons load here -->
-                        <p>Select a chapter to see its exercises.</p>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Python Adventure: Learn to Code</h1>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="tutorial-section" id="tutorial">
+                            <!-- Tutorial content loads here -->
+                        </div>
                     </div>
-                    <div id="current-exercise-content" class="exercise" style="display: none;">
-                        <!-- Exercise description loads here -->
-                    </div>
-                    <div id="hint-section" style="display: none;">
-                        <button class="btn btn-info mt-2" onclick="showHint()">Show Hint</button>
-                        <div id="hint-box" class="hint-container" style="display: none;">
-                            <i class="bi bi-lightbulb-fill"></i>
-                            <span id="hint-text"></span>
+                    
+                    <div class="col-md-6">
+                        <div class="exercise-section">
+                            <h3>Exercises</h3>
+                            <div class="exercises-list mb-3">
+                                <!-- Exercise selection buttons load here -->
+                                <p>Select a chapter from the sidebar to see its exercises.</p>
+                            </div>
+                            <div id="current-exercise-content" class="exercise" style="display: none;">
+                                <!-- Exercise description loads here -->
+                            </div>
+                            <div id="hint-section" style="display: none;">
+                                <button class="btn btn-info mt-2" onclick="showHint()">Show Hint</button>
+                                <div id="hint-box" class="hint-container" style="display: none;">
+                                    <i class="bi bi-lightbulb-fill"></i>
+                                    <span id="hint-text"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="coding-section" class="coding-section mt-4">
+                            <h3>Code Playground</h3>
+                            <textarea id="editor" placeholder="Select a chapter and an exercise to begin..."></textarea>
+                            <div class="mb-2">
+                                <button class="btn btn-primary" onclick="runCode()">Run Code</button>
+                                <button id="btn-check-exercise" class="btn btn-warning" onclick="checkExercise()" style="display: none;">Check Exercise</button>
+                                <button id="btn-next-exercise" class="btn btn-success" onclick="loadNextExercise()" style="display: none;">Next Exercise</button>
+                            </div>
+                            <div id="output"></div>
                         </div>
                     </div>
                 </div>
-
-                <div id="coding-section" class="coding-section mt-4" style="display: none;">
-                    <h3>Code Playground</h3>
-                    <textarea id="editor" placeholder="Type your Python code here..."></textarea>
-                    <div class="mb-2">
-                        <button class="btn btn-primary" onclick="runCode()">Run Code</button>
-                        <button class="btn btn-warning" onclick="checkExercise()">Check Exercise</button>
-                        <button id="btn-next-exercise" class="btn btn-success" onclick="loadNextExercise()" style="display: none;">Next Exercise</button>
-                    </div>
-                    <div id="output"></div>
-                </div>
-            </div>
+            </main>
         </div>
     </div>
 
@@ -139,6 +157,11 @@
         async function initPyodide() {
             pyodide = await loadPyodide();
             document.getElementById('output').textContent = 'Python environment ready!';
+        }
+
+        function highlightActiveChapter(chapterId) {
+            document.querySelectorAll('#chapter-list .list-group-item').forEach(item => item.classList.remove('active'));
+            document.getElementById(`ch-btn-${chapterId}`).classList.add('active');
         }
 
         function loadChapter(chapterId) {
@@ -156,11 +179,11 @@
 
             // Reset exercise view
             document.getElementById('current-exercise-content').style.display = 'none';
-            document.getElementById('editor').value = 'Select an exercise to start coding.';
+            document.getElementById('editor').value = 'You can try to run some code here.';
             document.getElementById('output').textContent = '';
             currentExercise = null;
             document.getElementById('btn-next-exercise').style.display = 'none';
-            document.getElementById('coding-section').style.display = 'none';
+            document.getElementById('btn-check-exercise').style.display = 'none';
             document.getElementById('hint-section').style.display = 'none';
         }
 
@@ -179,9 +202,6 @@
         }
 
         function loadExercise(exerciseId) {
-            // Show the coding section now that an exercise is active
-            document.getElementById('coding-section').style.display = 'block';
-
             const chapter = tutorialContent[currentChapter];
             currentExercise = chapter.exercises.find(ex => ex.id === exerciseId);
             
@@ -194,6 +214,9 @@
             `;
             document.getElementById('editor').value = currentExercise.starter_code || '';
             document.getElementById('output').textContent = '';
+
+            // Show exercise-specific buttons
+            document.getElementById('btn-check-exercise').style.display = 'inline-block';
 
             // Show hint section if a hint exists, but hide the hint box itself
             const hintSection = document.getElementById('hint-section');
@@ -315,6 +338,17 @@
 
                 <h3>Choose a chapter to begin!</h3>
             `;
+
+            // Dynamically load chapters into the sidebar
+            const chapterList = document.getElementById('chapter-list');
+            chapterList.innerHTML = Object.keys(tutorialContent).map(key => {
+                const chapter = tutorialContent[key];
+                return `<a href="#" id="ch-btn-${key}" class="list-group-item list-group-item-action" onclick="loadChapter('${key}'); highlightActiveChapter('${key}');">${chapter.title}</a>`;
+            }).join('');
+
+            // Load chapter 1 by default
+            loadChapter('chapter1');
+            highlightActiveChapter('chapter1');
         }
     </script>
 </body>

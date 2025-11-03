@@ -75,6 +75,23 @@ export const chapter2 = {
             print(name, "likes the color", color)</code></pre>
 
         <p>Now you're having a real conversation with your program! 💬</p>
+
+        <h3>Step 7: The Power of F-Strings (Magic Blanks)</h3>
+        <p>There’s an easier and cooler way to mix words and variables: <strong>f-strings</strong> (they start with <code>f</code> before the quotes).</p>
+        <pre><code>name = "Ari"
+age = 10
+print(f"My name is {name}, and I am {age} years old!")</code></pre>
+        <p>The <code>{}</code> are like little windows that show what’s inside your variables.
+        You can even do math inside them:</p>
+        <pre><code>print(f"Next year, I’ll be {age + 1} years old!")</code></pre>
+
+        <h3>Step 8: Changing Case</h3>
+        <p>You can make your text louder (uppercase) or softer (lowercase):</p>
+        <pre><code>word = "Python"
+print(word.upper())  # PYTHON
+print(word.lower())  # python</code></pre>
+        <p>Or make only the first letter uppercase:</p>
+        <pre><code>print(word.capitalize())  # Python</code></pre>
     `,
     exercises: [
         {
@@ -86,8 +103,7 @@ last_name = "lovelace"</code></pre>`,
             solution: `first_name = "ada"
 last_name = "lovelace"
 print(f"{first_name[0].upper()}.{last_name[0].upper()}.")`,
-            hint: 'Get the first character of each string using [0] and make it uppercase with .upper().'
-            ,
+            hint: 'You can get the first letter of a string like `first_name` by using index `[0]`. Then, use the `.upper()` method to make it a capital letter. Finally, use an f-string to combine the pieces!',
             starter_code: `first_name = "ada"
 last_name = "lovelace"
 
@@ -102,12 +118,47 @@ hobby = "exploring"</code></pre>`,
             solution: `name = "Zelda"
 hobby = "exploring"
 print(f"{name} loves {hobby} — that's awesome!")`,
-            hint: 'Use an f-string to combine the variables into the sentence.'
-            ,
+            hint: 'Use an f-string to build the sentence. Remember to place the variables `name` and `hobby` inside curly braces `{}` within the string.',
             starter_code: `name = "Zelda"
 hobby = "exploring"
 
 # Your code here to print the compliment.`
+        },
+        {
+            id: 'silly_sentence',
+            title: 'Silly Sentence Builder',
+            description: `Combine the variables below to print the sentence: "The happy robot sings loudly."
+<pre><code>adjective = "happy"
+noun = "robot"
+verb = "sings"
+adverb = "loudly"</code></pre>`,
+            solution: `adjective = "happy"
+noun = "robot"
+verb = "sings"
+adverb = "loudly"
+print(f"The {adjective} {noun} {verb} {adverb}.")`,
+            hint: 'Use an f-string to place the variables in the correct order. Don\'t forget the period at the end!',
+            starter_code: `adjective = "happy"
+noun = "robot"
+verb = "sings"
+adverb = "loudly"
+
+# Your code here to build the sentence.`
+        },
+        {
+            id: 'symbol_repeater',
+            title: 'Symbol Repeater',
+            description: `Create a line of 15 hash symbols. The output should be a single line: "###############"
+<pre><code>symbol = "#"
+count = 15</code></pre>`,
+            solution: `symbol = "#"
+count = 15
+print(symbol * count)`,
+            hint: 'In Python, you can multiply a string by a number to repeat it. For example, "a" * 3 results in "aaa".',
+            starter_code: `symbol = "#"
+count = 15
+
+# Your code here to print the repeated symbol.`
         }
     ]
 };
