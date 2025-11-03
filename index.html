@@ -110,6 +110,14 @@
         .hint-container i {
             font-size: 1.2rem;
         }
+        #section-list .list-group-item {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .section-list-for-chapter .list-group-item {
+            padding-left: 2.5rem; /* Indent section links */
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -233,10 +241,12 @@
             if (chapter.story && chapter.sections) {
                 chapterHtml += chapter.story;
                 chapter.sections.forEach((section, index) => {
+                    // Give each section an ID so we can link to it
+                    const sectionId = `section-${index}`;
                     if (index > 0) {
                         chapterHtml += '<hr class="my-4">'; // Add a separator between sections
                     }
-                    chapterHtml += `<h3>${section.title}</h3><div>${section.content}</div>`;
+                    chapterHtml += `<h3 id="${sectionId}">${section.title}</h3><div>${section.content}</div>`;
                 });
             } else { // Fallback to the old structure (single content property)
                 chapterHtml = chapter.content;
@@ -259,12 +269,32 @@
                 wrapper.appendChild(copyButton);
             });
             
-            // Load exercise buttons
+            // Load exercise and section lists
+            // First, hide all section lists
+            document.querySelectorAll('.section-list-for-chapter').forEach(list => {
+                list.style.display = 'none';
+                list.innerHTML = '';
+            });
+
             const exercisesListDiv = document.querySelector('.exercises-list');
             if (chapter.exercises && chapter.exercises.length > 0) {
                 exercisesListDiv.innerHTML = `<button class="btn btn-success" onclick="startExercises()">Start Exercises</button>`;
             } else {
                 exercisesListDiv.innerHTML = `<p>No exercises for this chapter.</p>`;
+            }
+
+            // Populate and show the section list for the CURRENT chapter
+            if (chapter.sections && chapter.sections.length > 0) {
+                const sectionListContainer = document.getElementById(`sections-for-${chapterId}`);
+                sectionListContainer.style.display = 'block';
+                chapter.sections.forEach((section, index) => {
+                    const sectionId = `section-${index}`;
+                    const link = document.createElement('a');
+                    link.href = `#${sectionId}`;
+                    link.className = 'list-group-item list-group-item-action border-0'; // border-0 for cleaner look
+                    link.innerHTML = section.title.replace(/<[^>]*>/g, '').replace(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g, '').trim();
+                    sectionListContainer.appendChild(link);
+                });
             }
 
             // Reset exercise view
@@ -536,8 +566,12 @@ json.dumps((result_passed, result_message))
             const progress = getProgress();
             chapterList.innerHTML = Object.keys(tutorialContent).map(key => {
                 const chapter = tutorialContent[key];
-                // Create the link with the title already inside
-                return `<a href="#" id="ch-btn-${key}" class="list-group-item list-group-item-action" onclick="loadChapter('${key}'); highlightActiveChapter('${key}');">${chapter.title}</a>`;
+                // Create a container for the chapter link and its future section list
+                return `
+                    <div>
+                        <a href="#" id="ch-btn-${key}" class="list-group-item list-group-item-action" onclick="loadChapter('${key}'); highlightActiveChapter('${key}');">${chapter.title}</a>
+                        <div id="sections-for-${key}" class="list-group list-group-flush section-list-for-chapter" style="display: none;"></div>
+                    </div>`;
             }).join('');
 
             // Now that the links exist, update their markers

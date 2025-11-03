@@ -29,7 +29,7 @@ export const chapter2 = {
 print('This is fun!')</code></pre>
         `},
         {
-            title: "2: Talking with Words and Numbers 🔤+🔢",
+            title: "2: Talking with Words and Numbers 🔤🔢",
             content: `
         <p>Python can talk about <strong>words</strong> (called <em>strings</em>) and <strong>numbers</strong> too!</p>
 
