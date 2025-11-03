@@ -183,6 +183,22 @@
             document.getElementById('output').textContent = 'Python environment ready!';
         }
 
+        function getProgress() {
+            const progress = localStorage.getItem('pythonAdventureProgress');
+            return progress ? JSON.parse(progress) : {};
+        }
+
+        function saveProgress(chapterId, exerciseId) {
+            const progress = getProgress();
+            if (!progress[chapterId]) {
+                progress[chapterId] = [];
+            }
+            if (!progress[chapterId].includes(exerciseId)) {
+                progress[chapterId].push(exerciseId);
+            }
+            localStorage.setItem('pythonAdventureProgress', JSON.stringify(progress));
+        }
+
         function highlightActiveChapter(chapterId) {
             document.querySelectorAll('#chapter-list .list-group-item').forEach(item => item.classList.remove('active'));
             document.getElementById(`ch-btn-${chapterId}`).classList.add('active');
@@ -230,11 +246,16 @@
             const chapter = tutorialContent[currentChapter];
             if (!chapter.exercises || chapter.exercises.length === 0) return;
 
+            const progress = getProgress();
+            const completedExercises = progress[currentChapter] || [];
+
             // Replace "Start" button with the list of exercise buttons
             const exercisesListDiv = document.querySelector('.exercises-list');
-            exercisesListDiv.innerHTML = chapter.exercises.map(ex => 
-                `<button class="btn btn-outline-primary m-1" id="btn-ex-${ex.id}" onclick="loadExercise('${ex.id}')">${ex.title}</button>`
-            ).join('');
+            exercisesListDiv.innerHTML = chapter.exercises.map(ex => {
+                const isDone = completedExercises.includes(ex.id);
+                const doneMarker = isDone ? ' ✅' : '';
+                return `<button class="btn btn-outline-primary m-1" id="btn-ex-${ex.id}" onclick="loadExercise('${ex.id}')">${ex.title}${doneMarker}</button>`;
+            }).join('');
 
             // Automatically load the first exercise
             loadExercise(chapter.exercises[0].id);
@@ -391,7 +412,12 @@
             
             let summaryMessage = '';
             if(allChecksPassed) {
-                 summaryMessage = '\n\n🎉 Great job! All checks passed!';
+                summaryMessage = '\n\n🎉 Great job! All checks passed!';
+                saveProgress(currentChapter, currentExercise.id);
+                const button = document.getElementById(`btn-ex-${currentExercise.id}`);
+                if (button && !button.innerHTML.includes('✅')) {
+                    button.innerHTML += ' ✅';
+                }
             } else {
                 summaryMessage = '\n\n🤔 Not quite there yet. Review the feedback below and try again!';
             }
