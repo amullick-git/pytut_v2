@@ -1,5 +1,5 @@
 export const chapter2 = {
-    title: "Talking to the Computer 🗣️💻",
+    title: "The Chat Crystal 💎<br><small class='text-muted'>Talking to the Computer</small>",
     content: `
         <div class="alert alert-info">
             <p>

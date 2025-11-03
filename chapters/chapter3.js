@@ -1,5 +1,5 @@
 export const chapter3 = {
-    title: "Treasure Boxes (Variables & Types) 💎📦",
+    title: "The Treasure Boxes 💎📦<br><small class='text-muted'>Variables & Types</small>",
     content: `
         <div class="alert alert-info">
             <p>
