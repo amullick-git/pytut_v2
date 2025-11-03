@@ -95,6 +95,24 @@ print(word.upper())  # PYTHON
 print(word.lower())  # python</code></pre>
         <p>Or make only the first letter uppercase:</p>
         <pre><code>print(word.capitalize())  # Python</code></pre>
+
+        <h3>9: Cleaning Up Extra Spaces 🧹</h3>
+        <p>Sometimes when people type, they add extra spaces at the beginning or end by accident. Python can clean these up for you with <code>.strip()</code>!</p>
+        <pre><code>messy_input = "   hello there   "
+clean_input = messy_input.strip()
+
+print(f"Messy: '{messy_input}'")
+print(f"Clean: '{clean_input}'")</code></pre>
+        <p>Output:</p>
+        <pre>Messy: '   hello there   '
+Clean: 'hello there'</pre>
+
+        <div class="alert alert-info mt-3">
+            ✨ This is very useful with <code>input()</code> to make sure you get just the text you need. For example, if a user types " yes " instead of "yes", <code>strip()</code> will fix it!
+        </div>
+        <pre><code>answer = input("Do you like ice cream? (yes/no) ")
+if answer.strip().lower() == "yes":
+    print("Me too! 🍦")</code></pre>
     `,
     exercises: [
         {
@@ -285,6 +303,43 @@ secret_password = "python"
 
 # Your code here to check if the passwords match
 # when both are converted to lowercase.`
+        }
+        ,
+        {
+            id: 'input_cleaner',
+            title: 'Input Cleaner',
+            description: `<p>A user typed their name, but accidentally added extra spaces. 🧼</p>
+<p>Clean up the <code>user_name</code> variable by removing the spaces from the beginning and end, then print the cleaned name.</p>
+<pre><code>user_name = "  alex  "</code></pre>`,
+            solution: `user_name = "  alex  "
+print(user_name.strip())`,
+            hint: 'The `.strip()` method removes whitespace from both the start and end of a string. Call it on the `user_name` variable.',
+            validation: [
+                {
+                    type: 'ast_check',
+                    script: `
+def check():
+    try:
+        tree = ast.parse(user_code)
+    except SyntaxError:
+        return False, "Your code has a syntax error."
+
+    for node in ast.walk(tree):
+        # Check for a call to .strip()
+        if (isinstance(node, ast.Call) and
+            getattr(node.func, 'attr', '') == 'strip'):
+            
+            # Check if it's called on the correct variable
+            if getattr(node.func.value, 'id', '') == 'user_name':
+                return True, "Correctly used the .strip() method."
+
+    return False, "💡 Hint: Make sure you are calling .strip() on the 'user_name' variable."
+`
+                }
+            ],
+            starter_code: `user_name = "  alex  "
+
+# Your code here to clean and print the name.`
         }
     ]
 };
