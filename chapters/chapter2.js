@@ -12,7 +12,7 @@ export const chapter2 = {
     `,
     sections: [
         {
-            title: "1: Saying Hello 👋",
+            title: "1: Saying Hello",
             content: `<p>Let's begin the conversation.<br>
             In Python, when you want to show something on the screen, you use a <strong>function</strong> called <code>print()</code>.</p>
 
@@ -29,7 +29,7 @@ export const chapter2 = {
 print('This is fun!')</code></pre>
         `},
         {
-            title: "2: Talking with Words and Numbers 🔤🔢",
+            title: "2: Talking with Words and Numbers",
             content: `
         <p>Python can talk about <strong>words</strong> (called <em>strings</em>) and <strong>numbers</strong> too!</p>
 
@@ -41,7 +41,7 @@ print('This is fun!')</code></pre>
         <p>It's like the computer is explaining what you asked — pretty smart, right?</p>
         `},
         {
-            title: "3: Your Own Sentences ✍️",
+            title: "3: Your Own Sentences",
             content: `
         <p>You can print multiple things in one line:</p>
 
@@ -51,7 +51,7 @@ print("I am", 10, "years old")</code></pre>
         <p>Python automatically adds spaces between the pieces.</p>
         `},
         {
-            title: "4: Joining Words (String Concatenation) 🔗",
+            title: "4: Joining Words (String Concatenation)",
             content: `
         <p>This long word means "stick together."<br>
             You can glue words using the <strong><code>+</code></strong> sign:</p>
@@ -66,7 +66,7 @@ print("I am", 10, "years old")</code></pre>
         </div>
         `},
         {
-            title: "5: Saving Words for Later (Variables) 📦",
+            title: "5: Saving Words for Later (Variables)",
             content: `
         <p>Let's store a name inside a box (a variable) so you can use it again.</p>
 
@@ -77,7 +77,7 @@ print("Hello,", name)</code></pre>
             You can reuse it anywhere in the program.</p>
         `},
         {
-            title: "6: Making the Computer Listen 👂",
+            title: "6: Making the Computer Listen",
             content: `
         <p>Now let's let the computer ask <strong>you</strong> something.</p>
 
@@ -97,7 +97,7 @@ print(name, "likes the color", color)</code></pre>
         <p>Now you're having a real conversation with your program! 💬</p>
         `},
         {
-            title: "7: The Power of F-Strings (Magic Blanks) ✨",
+            title: "7: The Power of F-Strings (Magic Blanks)",
             content: `
         <p>There’s an easier and cooler way to mix words and variables: <strong>f-strings</strong> (they start with <code>f</code> before the quotes).</p>
         <pre><code>name = "Ari"
@@ -109,7 +109,7 @@ print(f"My name is {name}, and I am {age} years old!")</code></pre>
 
         `},
         {
-            title: "8: Changing Case ⬆️⬇️",
+            title: "8: Changing Case",
             content: `
         <p>You can make your text louder (uppercase) or softer (lowercase):</p>
         <pre><code>word = "Python"
@@ -119,7 +119,7 @@ print(word.lower())  # python</code></pre>
         <pre><code>print(word.capitalize())  # Python</code></pre>
         `},
         {
-            title: "9: Cleaning Up Extra Spaces 🧹",
+            title: "9: Cleaning Up Extra Spaces",
             content: `
         <p>Sometimes when people type, they add extra spaces at the beginning or end by accident. Python can clean these up for you with <code>.strip()</code>!</p>
         <pre><code>messy_input = "   hello there   "
