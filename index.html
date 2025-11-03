@@ -17,6 +17,13 @@
     </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- CodeMirror for line numbers and syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/neat.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/python/python.min.js"></script>
+
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -99,15 +106,10 @@
         .tutorial-section pre code {
             color: #d63384; /* A pleasant pink for code elements */
         }
-        #editor {
-            width: 100%;
-            height: 200px;
-            font-family: monospace;
-            margin-bottom: 10px;
+        /* CodeMirror styling */
+        .CodeMirror {
             border: 1px solid #ccc;
             border-radius: 4px;
-            padding: 10px;
-            transition: box-shadow 0.2s ease-in-out; /* For flash effect */
         }
         #output {
             width: 100%;
@@ -224,7 +226,7 @@
                         </div>
                         <div class="col-lg-6 mt-4 mt-lg-0">
                             <h3>Code Playground</h3>
-                            <textarea id="editor" placeholder="Try some python code here ..."></textarea>
+                            <textarea id="editor" placeholder="Try some python code here ..."></textarea> <!-- This will be replaced by CodeMirror -->
                             <div class="mb-2">
                                 <button class="btn btn-primary" onclick="runCode()">Run Code</button>
                                 <button id="btn-check-exercise" class="btn btn-warning" onclick="checkExercise()" style="display: none;">Check Exercise</button>
@@ -241,6 +243,7 @@
     <script>
         let pyodide = null;
         let currentChapter = 'chapter1';
+        let codeEditor = null; // To hold the CodeMirror instance
         let currentExercise = null;
 
         async function initPyodide() {
@@ -407,7 +410,7 @@
                 <h4>${currentExercise.title}</h4>
                 <div>${currentExercise.description}</div>
             `;
-            document.getElementById('editor').value = currentExercise.starter_code || '';
+            codeEditor.setValue(currentExercise.starter_code || '');
             document.getElementById('output').textContent = '';
 
             // Show exercise-specific buttons
@@ -483,13 +486,13 @@
 
         function sendToPlayground(preElement) {
             const code = preElement.querySelector('code')?.innerText || preElement.innerText;
-            const editor = document.getElementById('editor');
-            editor.value = code;
+            codeEditor.setValue(code);
 
             // Scroll to the editor and give it focus
-            editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            codeEditor.getWrapperElement().scrollIntoView({ behavior: 'smooth', block: 'center' });
+            codeEditor.focus();
             
-            // Flash the editor to provide visual feedback
+            // Flash the editor to provide visual feedback (note: this won't work on CodeMirror directly, but we can style the wrapper)
             editor.style.boxShadow = '0 0 0 2px rgba(13, 110, 253, 0.5)';
             setTimeout(() => {
                 editor.style.boxShadow = '';
@@ -513,7 +516,7 @@
 
         async function runCode() {
             if (!pyodide) return;
-            const code = document.getElementById('editor').value;
+            const code = codeEditor.getValue();
             let output = '';
             
             try {
@@ -538,7 +541,7 @@
                 return;
             }
             
-            const userCode = document.getElementById('editor').value;
+            const userCode = codeEditor.getValue();
             const userOutput = await runCode();
             const expectedOutput = await runSolution(currentExercise.solution);
 
@@ -657,6 +660,14 @@ json.dumps((result_passed, result_message))
                 startExercises(); // Display the exercise buttons
                 loadExercise(lastExercise); // Load the specific exercise
             }
+
+            // Initialize CodeMirror on the textarea
+            codeEditor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+                lineNumbers: true,
+                mode: 'python',
+                theme: 'neat',
+                indentUnit: 4
+            });
         }
     </script>
 </body>

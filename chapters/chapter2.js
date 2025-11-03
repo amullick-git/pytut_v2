@@ -183,12 +183,12 @@ last_name = "lovelace"
             id: 'compliment_machine', // <-- This comma was missing
             title: 'The Compliment Machine',
             description: `<p>Using the provided variables, print a compliment. 💬</p>
-<p>The output should be: "Zelda loves exploring — that's awesome!"</p>
+<p>The output should be: "Zelda loves exploring, that's awesome!"</p>
 <pre><code>name = "Zelda"
 hobby = "exploring"</code></pre>`,
             solution: `name = "Zelda"
 hobby = "exploring"
-print(f"{name} loves {hobby} — that's awesome!")`,
+print(f"{name} loves {hobby}, that's awesome!")`,
             hint: 'Use an f-string to build the sentence. Remember to place the variables `name` and `hobby` inside curly braces `{}` within the string.',
             validation: [
                 {
