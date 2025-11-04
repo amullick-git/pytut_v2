@@ -509,6 +509,15 @@
             document.getElementById('btn-reset-code').style.display = 'none';
             document.getElementById('hint-section').style.display = 'none';
             document.getElementById('back-to-lesson-container').innerHTML = ''; // Clear back link
+
+            // Update chapter navigation buttons visibility
+            const chapterKeys = Object.keys(tutorialContent);
+            const currentChapterIndex = chapterKeys.indexOf(chapterId);
+            const prevButton = document.getElementById('btn-prev-chapter');
+            const nextButton = document.getElementById('btn-next-chapter');
+
+            prevButton.style.display = currentChapterIndex === 0 ? 'none' : 'inline-block';
+            nextButton.style.display = currentChapterIndex === chapterKeys.length - 1 ? 'none' : 'inline-block';
         }
 
         function startExercises() {
@@ -610,6 +619,26 @@
                 loadExercise(nextExercise.id);
             } else {
                 alert("You've reached the last exercise of this chapter!");
+            }
+        }
+
+        function loadNextChapter() {
+            const chapterKeys = Object.keys(tutorialContent);
+            const currentChapterIndex = chapterKeys.indexOf(currentChapter);
+            if (currentChapterIndex < chapterKeys.length - 1) {
+                const nextChapterId = chapterKeys[currentChapterIndex + 1];
+                loadChapter(nextChapterId);
+                highlightActiveChapter(nextChapterId);
+            }
+        }
+
+        function loadPrevChapter() {
+            const chapterKeys = Object.keys(tutorialContent);
+            const currentChapterIndex = chapterKeys.indexOf(currentChapter);
+            if (currentChapterIndex > 0) {
+                const prevChapterId = chapterKeys[currentChapterIndex - 1];
+                loadChapter(prevChapterId);
+                highlightActiveChapter(prevChapterId);
             }
         }
 
@@ -812,6 +841,23 @@
                     }
                 }
                 updateChapterMarker(currentChapter); // Update chapter status in sidebar
+
+                // Check if all exercises in the chapter are complete
+                const chapter = tutorialContent[currentChapter];
+                const progress = getProgress();
+                const completedCount = (progress[currentChapter] || []).length;
+                const totalExercises = chapter.exercises ? chapter.exercises.length : 0;
+
+                if (totalExercises > 0 && completedCount === totalExercises) {
+                    // Check if there is a next chapter
+                    const chapterKeys = Object.keys(tutorialContent);
+                    const currentChapterIndex = chapterKeys.indexOf(currentChapter);
+                    if (currentChapterIndex < chapterKeys.length - 1) {
+                        const nextChapterId = chapterKeys[currentChapterIndex + 1];
+                        // Add a link to the summary message to go to the next chapter
+                        summaryMessage += `\n\n🏆 You've completed all exercises in this chapter! <a href="#" onclick="event.preventDefault(); loadChapter('${nextChapterId}'); highlightActiveChapter('${nextChapterId}');">Move to the next chapter.</a>`;
+                    }
+                }
             } else {
                 summaryMessage = '\n\n🤔 Not quite there yet. Review the feedback below and try again!';
             }
