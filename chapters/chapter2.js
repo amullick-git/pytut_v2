@@ -297,14 +297,14 @@ count = 15
         {
             id: 'password_check',
             title: 'Secret Password Check',
-            description: `<p>A user entered a password, but we need to check it without worrying about capitalization. 🤫</p>
-<p>Compare the <code>user_input</code> to the <code>secret_password</code> to see if they match when both are lowercase. Print <code>True</code> if they match, <code>False</code> otherwise.</p>
+            description: `<p>A user entered a password, but we need to check it without worrying about capitalization or extra spaces. 🤫</p>
+<p>Compare the <code>user_input</code> to the <code>secret_password</code> to see if they match. Print <code>True</code> if they match, <code>False</code> otherwise.</p>
 <pre><code>user_input = "  PytHoN  "
 secret_password = "pYThOn"</code></pre>`,
             solution: `user_input = "  PytHoN  "
 secret_password = "pYThOn"
-print(user_input.lower() == secret_password.lower())`,
-            hint: 'Use the .lower() method on both strings before comparing them with the `==` operator. What about the extra spaces in the user input?',
+print(user_input.strip().lower() == secret_password.lower())`,
+            hint: 'First, clean up the user input by removing extra spaces with `.strip()`. Then, convert both strings to lowercase with `.lower()` before comparing them.',
             validation: [
                 {
                     type: 'ast_check',
@@ -317,10 +317,11 @@ def check():
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Compare):
-            # A bit simplified: check if .lower() is used on both sides
-            if '.lower()' in ast.unparse(node.left) and '.lower()' in ast.unparse(node.comparators[0]):
-                return True, "Correctly used the .lower() method on both variables."
-    return False, "💡 Hint: Remember to use the .lower() method on both variables to compare them."
+            # Check if the user input side has both strip() and lower()
+            left_side = ast.unparse(node.left)
+            if 'user_input' in left_side and '.strip()' in left_side and '.lower()' in left_side:
+                return True, "Excellent! You chained .strip() and .lower() together."
+    return False, "💡 Hint: Remember to use both .strip() and .lower() on the user_input variable."
 `
                 }
             ],
@@ -328,7 +329,7 @@ def check():
 secret_password = "pYThOn"
 
 # Your code here to check if the passwords match
-# when both are converted to lowercase.`
+# after cleaning up the input.`
         }
         ,
         {
