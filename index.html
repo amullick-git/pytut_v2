@@ -230,10 +230,11 @@
                                 </div>
                             </div>
                             <textarea id="editor" placeholder="Try some python code here ..."></textarea>
-                            <div class="mb-2">
+                            <div class="d-flex mb-2">
                                 <button class="btn btn-primary" onclick="runCode()">Run Code</button>
-                                <button id="btn-check-exercise" class="btn btn-warning" onclick="checkExercise()" style="display: none;">Check Exercise</button>
-                                <button id="btn-next-exercise" class="btn btn-success" onclick="loadNextExercise()" style="display: none;">Next Exercise</button>
+                                <button id="btn-check-exercise" class="btn btn-info" onclick="checkExercise()" style="display: none;">Check Exercise</button>
+                                <button id="btn-reset-code" class="btn btn-outline-danger" onclick="resetCode()" style="display: none;"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+                                <button id="btn-next-exercise" class="btn btn-success ms-auto" onclick="loadNextExercise()" style="display: none;">Next Exercise</button>
                             </div>
                             <div id="output"></div>
                         </div>
@@ -243,6 +244,26 @@
         </div>
     </div>
 
+    <!-- Reset Confirmation Modal -->
+    <div class="modal fade" id="resetConfirmModal" tabindex="-1" aria-labelledby="resetConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetConfirmModalLabel">Confirm Reset</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to reset your code? Your current work on this exercise will be lost.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmResetBtn">Reset Code</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let pyodide = null;
         let currentChapter = 'chapter1';
@@ -268,6 +289,17 @@
                 progress[chapterId].push(exerciseId);
             }
             localStorage.setItem('pythonAdventureProgress', JSON.stringify(progress));
+        }
+
+        function saveCodeForExercise(chapterId, exerciseId, code) {
+            if (!chapterId || !exerciseId) return;
+            const key = `code-${chapterId}-${exerciseId}`;
+            localStorage.setItem(key, code);
+        }
+
+        function getSavedCodeForExercise(chapterId, exerciseId) {
+            if (!chapterId || !exerciseId) return null;
+            return localStorage.getItem(`code-${chapterId}-${exerciseId}`);
         }
 
         function updateChapterMarker(chapterId) {
@@ -296,6 +328,12 @@
         }
 
         function loadChapter(chapterId) {
+            // Save code from the current exercise before switching chapters
+            if (currentChapter && currentExercise && codeEditor) {
+                const code = codeEditor.getValue();
+                saveCodeForExercise(currentChapter, currentExercise.id, code);
+            }
+
             currentChapter = chapterId;
             localStorage.setItem('lastChapter', chapterId); // Save chapter
             localStorage.removeItem('lastExercise'); // Clear last exercise
@@ -379,6 +417,7 @@
             currentExercise = null;
             document.getElementById('btn-next-exercise').style.display = 'none';
             document.getElementById('btn-check-exercise').style.display = 'none';
+            document.getElementById('btn-reset-code').style.display = 'none';
             document.getElementById('hint-section').style.display = 'none';
         }
 
@@ -402,6 +441,12 @@
         }
 
         function loadExercise(exerciseId) {
+            // Save code from the previous exercise before loading the new one
+            if (currentChapter && currentExercise && codeEditor) {
+                const code = codeEditor.getValue();
+                saveCodeForExercise(currentChapter, currentExercise.id, code);
+            }
+
             const chapter = tutorialContent[currentChapter];
             currentExercise = chapter.exercises.find(ex => ex.id === exerciseId);
             localStorage.setItem('lastExercise', exerciseId); // Save exercise
@@ -413,11 +458,15 @@
                 <h4>${currentExercise.title}</h4>
                 <div>${currentExercise.description}</div>
             `;
-            codeEditor.setValue(currentExercise.starter_code || '');
+
+            const savedCode = getSavedCodeForExercise(currentChapter, exerciseId);
+            codeEditor.setValue(savedCode || currentExercise.starter_code || '');
+
             document.getElementById('output').textContent = '';
 
             // Show exercise-specific buttons
             document.getElementById('btn-check-exercise').style.display = 'inline-block';
+            document.getElementById('btn-reset-code').style.display = 'inline-block';
 
             // Show hint section if a hint exists, but hide the hint box itself
             const hintButton = document.getElementById('btn-hint');
@@ -474,6 +523,20 @@
             }
         }
 
+        function resetCode() {
+            if (!currentChapter || !currentExercise) {
+                // This case should ideally not be hit if button is hidden correctly
+                console.warn("Reset button clicked without an active exercise.");
+                return;
+            }
+
+            // Show the Bootstrap confirmation modal
+            const resetModal = new bootstrap.Modal(document.getElementById('resetConfirmModal'));
+            resetModal.show();
+            // The actual reset logic is now handled by an event listener on the modal's button
+            // to prevent it from running before confirmation.
+        }
+
         function showHint() {
             if (currentExercise && currentExercise.hint) {
                 const hintBox = document.getElementById('hint-box');
@@ -522,6 +585,11 @@
         async function runCode() {
             if (!pyodide) return;
             const code = codeEditor.getValue();
+
+            if (currentChapter && currentExercise) {
+                saveCodeForExercise(currentChapter, currentExercise.id, code);
+            }
+
             let output = '';
             
             try {
@@ -675,6 +743,23 @@ json.dumps((result_passed, result_message))
                 loadExercise(lastExercise); // Load the specific exercise
             }
         }
+
+        // Add event listener for the modal's confirm button after the DOM is loaded
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const confirmResetButton = document.getElementById('confirmResetBtn');
+            if (confirmResetButton) {
+                confirmResetButton.addEventListener('click', () => {
+                    if (currentChapter && currentExercise) {
+                        const key = `code-${currentChapter}-${currentExercise.id}`;
+                        localStorage.removeItem(key);
+                        codeEditor.setValue(currentExercise.starter_code || '');
+                    }
+                    // Hide the modal after action
+                    const resetModal = bootstrap.Modal.getInstance(document.getElementById('resetConfirmModal'));
+                    resetModal.hide();
+                });
+            }
+        });
     </script>
 </body>
 </html>
