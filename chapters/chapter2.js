@@ -177,7 +177,7 @@ def check():
             starter_code: `first_name = "ada"
 last_name = "lovelace"
 
-# Your code here to print the initials like "A.L."`
+# --- DO NOT DELETE: Your code starts below ---`
         },
         {
             id: 'compliment_machine', // <-- This comma was missing
@@ -214,7 +214,7 @@ def check():
             starter_code: `name = "Zelda"
 hobby = "exploring"
 
-# Your code here to print the compliment.`
+# --- DO NOT DELETE: Your code starts below ---`
         },
         {
             id: 'silly_sentence',
@@ -257,7 +257,7 @@ noun = "robot"
 verb = "sings"
 adverb = "loudly"
 
-# Your code here to build the sentence.`
+# --- DO NOT DELETE: Your code starts below ---`
         },
         {
             id: 'symbol_repeater',
@@ -292,7 +292,7 @@ def check():
             starter_code: `symbol = "#"
 count = 15
 
-# Your code here to print the repeated symbol.`
+# --- DO NOT DELETE: Your code starts below ---`
         },
         {
             id: 'password_check',
@@ -328,8 +328,7 @@ def check():
             starter_code: `user_input = "  PytHoN  "
 secret_password = "pYThOn"
 
-# Your code here to check if the passwords match
-# after cleaning up the input.`
+# --- DO NOT DELETE: Your code starts below ---`
         }
         ,
         {
@@ -366,7 +365,7 @@ def check():
             ],
             starter_code: `user_name = "  alex  "
 
-# Your code here to clean and print the name.`
+# --- DO NOT DELETE: Your code starts below ---`
         }
     ]
 };

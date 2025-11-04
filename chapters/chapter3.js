@@ -125,7 +125,7 @@ def check():
             starter_code: `radius = 5
 pi = 3.14159
 
-# Your code here to calculate and print the area.`
+# --- DO NOT DELETE: Your code starts below ---`
         },
         {
             id: 'name_age_story',
@@ -175,7 +175,7 @@ def check():
             starter_code: `name = "Ari"
 age = 10
 
-# Your code here to print the story.`
+# --- DO NOT DELETE: Your code starts below ---`
         },
         {
             id: 'pet_owner_check',
@@ -207,8 +207,7 @@ def check():
             hint: 'First, convert the `has_pet_answer` to lowercase using `.lower()`. Then, compare it to the string "yes" using `==`.',
             starter_code: `has_pet_answer = "Yes"
 
-# Your code here to check if the answer is "yes"
-# and print the boolean result.`
+# --- DO NOT DELETE: Your code starts below ---`
         }
         ,
         {
@@ -245,7 +244,7 @@ def check():
             starter_code: `item_price_str = "15.5"
 quantity = 3
 
-# Your code here to calculate and print the total cost.`
+# --- DO NOT DELETE: Your code starts below ---`
         }
         ,
         {
@@ -292,7 +291,7 @@ def check():
             starter_code: `potions = 17
 adventurers = 5
 
-# Your code here to calculate and print the distribution.`
+# --- DO NOT DELETE: Your code starts below ---`
         },
         {
             id: 'level_up',
@@ -330,7 +329,7 @@ def check():
             hint: 'First, use `.split(": ")[1]` to get the number part of the string. Then, convert that part to an integer with `int()`. Finally, add 1 and print the result in an f-string.',
             starter_code: `level_string = "Level: 8"
 
-# Your code here to extract, increment, and print the new level.`
+# --- DO NOT DELETE: Your code starts below ---`
         }
     ]
 };

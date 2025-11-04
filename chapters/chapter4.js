@@ -176,7 +176,7 @@ else:
             </ul>`,
             starter_code: `door = "blue" # Try changing this to "red", "green", or "yellow"
 
-# Your code here to check the door choice`,
+# --- DO NOT DELETE: Your code starts below ---`,
             solution: `door = "blue"
 if door == "red":
     print("You found a dragon!")
@@ -210,6 +210,31 @@ def check():
 
     return True, "Structure with if/elif/else looks correct!"
 `
+                },
+                {
+                    type: 'output_match_cases',
+                    cases: [
+                        {
+                            name: 'Test with "red"',
+                            setup_code: 'door = "red"',
+                            expected_output: 'You found a dragon!\n'
+                        },
+                        {
+                            name: 'Test with "blue"',
+                            setup_code: 'door = "blue"',
+                            expected_output: 'You found treasure!\n'
+                        },
+                        {
+                            name: 'Test with "green"',
+                            setup_code: 'door = "green"',
+                            expected_output: 'You fell into a trap!\n'
+                        },
+                        {
+                            name: 'Test with "yellow" (invalid)',
+                            setup_code: 'door = "yellow"',
+                            expected_output: "That's not a valid door!\n"
+                        }
+                    ]
                 }
             ]
         },
@@ -224,7 +249,7 @@ def check():
             </ul>`,
             starter_code: `money = 8 # Try changing this to 4 or 12
 
-# Your code here to check the amount of money`,
+# --- DO NOT DELETE: Your code starts below ---`,
             solution: `money = 8
 if money < 5:
     print("Not enough for a snack.")
@@ -233,7 +258,33 @@ elif money <= 10:
 else:
     print("You can buy a meal.")`,
             hint: "You can check the conditions in order. First, check if `money < 5`. In the `elif`, you only need to check if `money <= 10`, because the first `if` already handled cases where it's less than 5.",
-            validation: []
+            validation: [
+                {
+                    type: 'output_match_cases',
+                    cases: [
+                        {
+                            name: 'Test with 4 (not enough)',
+                            setup_code: 'money = 4',
+                            expected_output: 'Not enough for a snack.\n'
+                        },
+                        {
+                            name: 'Test with 5 (can buy chips)',
+                            setup_code: 'money = 5',
+                            expected_output: 'You can buy chips.\n'
+                        },
+                        {
+                            name: 'Test with 10 (can buy chips)',
+                            setup_code: 'money = 10',
+                            expected_output: 'You can buy chips.\n'
+                        },
+                        {
+                            name: 'Test with 12 (can buy a meal)',
+                            setup_code: 'money = 12',
+                            expected_output: 'You can buy a meal.\n'
+                        }
+                    ]
+                }
+            ]
         }
     ]
 };

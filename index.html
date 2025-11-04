@@ -643,6 +643,19 @@
                             allChecksPassed = false;
                         }
                     }
+                    if (check.type === 'output_match_cases') {
+                        for (const testCase of check.cases) {
+                            const caseResult = await runCodeWithSetup(userCode, testCase.setup_code);
+                            if (caseResult.trim() === testCase.expected_output.trim()) {
+                                feedback.push(`✅ ${testCase.name}: Passed`);
+                            } else {
+                                feedback.push(`❌ ${testCase.name}: Failed`);
+                                feedback.push(`   - Expected: ${JSON.stringify(testCase.expected_output.trim())}`);
+                                feedback.push(`   - Got:      ${JSON.stringify(caseResult.trim())}`);
+                                allChecksPassed = false;
+                            }
+                        }
+                    }
                 }
             }
             
@@ -675,6 +688,37 @@
             `);
             await pyodide.runPythonAsync(solution);
             return pyodide.runPython("sys.stdout.getvalue()");
+        }
+
+        async function runCodeWithSetup(userCode, setupCode) {
+            if (!pyodide) return;
+            if (!currentExercise || !currentExercise.starter_code) return userCode; // Failsafe
+
+            let output = '';
+            try {
+                pyodide.runPython(`
+                    import io, sys
+                    sys.stdout = io.StringIO()
+                `);
+
+                // As you suggested, we remove the original setup from the user's code.
+                // We identify the setup part of the starter code (everything before the comment).
+                const setupMarker = '# --- DO NOT DELETE: Your code starts below ---';
+                const originalSetupLines = currentExercise.starter_code.split(setupMarker)[0].split('\n').filter(line => line.trim() !== '');
+
+                // Filter out those setup lines from the user's submitted code.
+                const userLogicOnly = userCode.split('\n').filter(userLine => 
+                    !originalSetupLines.some(setupLine => userLine.trim().startsWith(setupLine.split('=')[0].trim()))
+                ).join('\n');
+
+                // Prepend the current test case's setup code and run.
+                const fullCode = `${setupCode}\n${userLogicOnly}`;
+                await pyodide.runPythonAsync(fullCode);
+                output = pyodide.runPython("sys.stdout.getvalue()");
+            } catch (error) {
+                output = 'Error running code: ' + error.message;
+            }
+            return output;
         }
 
         async function runAstCheck(userCode, checkScript) {
