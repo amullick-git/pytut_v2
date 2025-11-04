@@ -238,7 +238,7 @@
                                 <!-- Exercise description loads here -->
                             </div>
                         </div>
-                        <div class="col-12 mt-4 mt-lg-0">
+                        <div id="exercise-workspace-container" class="col-12 mt-4 mt-lg-0" style="display: none;">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div class="d-flex align-items-center">
                                     <h3>Exercise Workspace</h3>
@@ -508,6 +508,7 @@
             document.getElementById('btn-check-exercise').style.display = 'none';
             document.getElementById('btn-reset-code').style.display = 'none';
             document.getElementById('hint-section').style.display = 'none';
+            document.getElementById('exercise-workspace-container').style.display = 'none';
             document.getElementById('back-to-lesson-container').innerHTML = ''; // Clear back link
 
             // Update chapter navigation buttons visibility
@@ -557,6 +558,9 @@
                 <h4>${currentExercise.title}</h4>
                 <div>${currentExercise.description}</div>
             `;
+
+            // Show the entire workspace container
+            document.getElementById('exercise-workspace-container').style.display = 'block';
 
             const savedCode = getSavedCodeForExercise(currentChapter, exerciseId);
             codeEditor.setValue(savedCode || currentExercise.starter_code || '');
