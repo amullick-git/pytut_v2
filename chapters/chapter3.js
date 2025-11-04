@@ -3,13 +3,9 @@ console.log("Loading chapter3.js..."); // eslint-disable-line no-console
 export const chapter3 = {
     title: "The Treasure Boxes 📦<br><small class='text-muted'>Variables & Types</small>",
     story: `
-        <div class="alert alert-info">
-            <p>
-                Deep inside the Code Forest, you find glowing treasure boxes of different shapes and colors. Each one can hold something special—a number, a word, or even a True/False switch.
-                These are <strong>variables</strong> — Python's magical storage boxes that remember things for you!
-            </p>
-        </div>
-    `,
+        <p>Deep inside the Code Forest, you find glowing treasure boxes of different shapes and colors. Each one can hold something special—a number, a word, or even a True/False switch.
+        These are <strong>variables</strong> — Python's magical storage boxes that remember things for you!</p>
+    `,    
     sections: [
         {
             title: "1: What’s a Variable?",

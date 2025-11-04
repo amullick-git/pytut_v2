@@ -355,7 +355,9 @@
             let chapterHtml = '';
             // Check for the new structure (story + sections)
             if (chapter.story && chapter.sections) {
-                chapterHtml += chapter.story;
+                // Apply consistent formatting to the story here
+                chapterHtml += `<div class="alert alert-info">${chapter.story}</div>`;
+
                 chapter.sections.forEach((section, index) => {
                     // Give each section an ID so we can link to it
                     const sectionId = `section-${index}`;

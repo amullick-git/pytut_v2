@@ -3,13 +3,9 @@ console.log("Loading chapter2.js...");
 export const chapter2 = {
     title: "The Chat Crystal 💎<br><small class='text-muted'>Talking to the Computer</small>",
     story: `
-        <div class="alert alert-info">
-            <p>
-                You've just discovered Python's "Chat Crystal." 💎 When you speak to it, it listens carefully—and answers!
-                But here's the trick: you must speak in Python's special language. Ready to learn how to <em>talk</em> to your computer?
-            </p>
-        </div>
-    `,
+        <p>You've just discovered Python's "Chat Crystal." 💎 When you speak to it, it listens carefully—and answers!
+        But here's the trick: you must speak in Python's special language. Ready to learn how to <em>talk</em> to your computer?</p>
+    `,    
     sections: [
         {
             title: "1: Saying Hello",

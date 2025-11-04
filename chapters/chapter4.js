@@ -3,14 +3,12 @@ console.log("Loading chapter4.js..."); // eslint-disable-line no-console
 export const chapter4 = {
     title: "Smart Decisions 🧠⚖️<br><small class='text-muted'>If / Elif / Else</small>",
     story: `
-        <p>
-            You arrive at the “Temple of Choices.” The walls are covered in glowing doors. Each door opens only if the right condition is met.
-            Python, your trusty robot guide, says:
-        </p>
+        <p>You arrive at the “Temple of Choices.” The walls are covered in glowing doors. Each door opens only if the right condition is met.
+        Python, your trusty robot guide, says:</p>
         <blockquote>
             “In coding, I can make decisions too! Just tell me <em>when</em> to open each door.”
         </blockquote>
-        <p>Let’s learn how to help Python choose wisely!</p>
+        <p>Let’s learn how to help Python choose wisely!</p>    
     `,
     sections: [
         {
