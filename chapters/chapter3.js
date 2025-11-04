@@ -95,6 +95,7 @@ print(num_as_int * 2) # Output: 84</code></pre>`
     exercises: [
         {
             id: 'circle_area',
+            version: 1,
             title: 'The Circle Area Calculator',
             description: `<p>Calculate the area of a circle with a radius of 5. 🎯</p>
 <p>The formula is <code>π × r²</code>. Use the provided variables and print the result.</p>
@@ -129,6 +130,7 @@ pi = 3.14159
         },
         {
             id: 'name_age_story',
+            version: 1,
             title: 'The Name & Age Story',
             description: `<p>Using the variables below, create a story. ✍️</p>
 <p>The output should be: "Ari is 10 years old and will be 11 next year!"</p>
@@ -179,6 +181,7 @@ age = 10
         },
         {
             id: 'pet_owner_check',
+            version: 1,
             title: 'True or False Pet Owner',
             description: `<p>A user told us if they have a pet. We need to turn their answer into a "boolean" value (True or False). 🐾</p>
 <p>Check if the <code>has_pet_answer</code> is "yes" (ignoring case). Print <code>True</code> if it is, and <code>False</code> otherwise.</p>
@@ -212,6 +215,7 @@ def check():
         ,
         {
             id: 'item_cost_calculator',
+            version: 1,
             title: 'Item Cost Calculator',
             description: `<p>You're buying 3 potions that cost "15.5" gold each. The price is given as a string. 🧪</p>
 <p>Calculate the total cost and print it in a user-friendly message: "Total cost: 46.5 gold"</p>
@@ -249,6 +253,7 @@ quantity = 3
         ,
         {
             id: 'potion_distribution',
+            version: 1,
             title: 'Potion Distribution',
             description: `<p>You have 17 health potions to distribute among 5 adventurers. 🧙‍♂️</p>
 <p>Calculate how many potions each adventurer gets and how many are left over. This requires two special operators:</p>
@@ -295,6 +300,7 @@ adventurers = 5
         },
         {
             id: 'level_up',
+            version: 1,
             title: 'Level Up!',
             description: `<p>A player's level is stored in a string. You need to extract the number, add 1 to it, and announce their new level. 🚀</p>
 <p>The final output should be: "Level up! You are now level 9."</p>

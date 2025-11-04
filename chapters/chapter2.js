@@ -143,6 +143,7 @@ if answer.strip().lower() == "yes":
     exercises: [
         {
             id: 'name_game',
+            version: 1,
             title: 'The Initials Game',
             description: `<p>Print the user's initials based on the variables below. 🎯</p>
 <p>The output should be in uppercase, followed by periods, like "A.L."</p>
@@ -181,6 +182,7 @@ last_name = "lovelace"
         },
         {
             id: 'compliment_machine', // <-- This comma was missing
+            version: 1,
             title: 'The Compliment Machine',
             description: `<p>Using the provided variables, print a compliment. 💬</p>
 <p>The output should be: "Zelda loves exploring, that's awesome!"</p>
@@ -218,6 +220,7 @@ hobby = "exploring"
         },
         {
             id: 'silly_sentence',
+            version: 1,
             title: 'Silly Sentence Builder',
             description: `<p>Combine the variables below to print a complete sentence. ✍️</p>
 <p>The output should be: "The happy robot sings loudly."</p>
@@ -261,6 +264,7 @@ adverb = "loudly"
         },
         {
             id: 'symbol_repeater',
+            version: 1,
             title: 'Symbol Repeater',
             description: `<p>Create a line of 15 hash symbols using the variables below. ⛓️</p>
 <p>The output should be a single line: "###############"</p>
@@ -296,6 +300,7 @@ count = 15
         },
         {
             id: 'password_check',
+            version: 1,
             title: 'Secret Password Check',
             description: `<p>A user entered a password, but we need to check it without worrying about capitalization or extra spaces. 🤫</p>
 <p>Compare the <code>user_input</code> to the <code>secret_password</code> to see if they match. Print <code>True</code> if they match, <code>False</code> otherwise.</p>
@@ -333,6 +338,7 @@ secret_password = "pYThOn"
         ,
         {
             id: 'input_cleaner',
+            version: 1,
             title: 'Input Cleaner',
             description: `<p>A user typed their name, but accidentally added extra spaces. 🧼</p>
 <p>Clean up the <code>user_name</code> variable by removing the spaces from the beginning and end, then print the cleaned name.</p>

@@ -292,14 +292,27 @@
         }
 
         function saveCodeForExercise(chapterId, exerciseId, code) {
-            if (!chapterId || !exerciseId) return;
+            if (!chapterId || !exerciseId || !currentExercise) return;
             const key = `code-${chapterId}-${exerciseId}`;
-            localStorage.setItem(key, code);
+            const dataToSave = {
+                code: code,
+                version: currentExercise.version || 1 // Save code with its version
+            };
+            localStorage.setItem(key, JSON.stringify(dataToSave));
         }
 
         function getSavedCodeForExercise(chapterId, exerciseId) {
-            if (!chapterId || !exerciseId) return null;
-            return localStorage.getItem(`code-${chapterId}-${exerciseId}`);
+            if (!chapterId || !exerciseId || !currentExercise) return null;
+            const key = `code-${chapterId}-${exerciseId}`;
+            const savedData = localStorage.getItem(key);
+            if (!savedData) return null;
+
+            const parsedData = JSON.parse(savedData);
+            // If saved version matches current exercise version, return the code.
+            if (parsedData.version === currentExercise.version) {
+                return parsedData.code;
+            }
+            return null; // Otherwise, discard saved code.
         }
 
         function updateChapterMarker(chapterId) {

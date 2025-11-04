@@ -166,6 +166,7 @@ else:
     exercises: [
         {
             id: 'adventure_door_game',
+            version: 1,
             title: "Adventure Door Game",
             description: `<p>Imagine a player chose a door. Based on the value of the <code>door</code> variable below, reveal what's behind it.</p>
             <ul>
@@ -240,6 +241,7 @@ def check():
         },
         {
             id: 'smart_vending_machine',
+            version: 1,
             title: "The Smart Vending Machine",
             description: `<p>A vending machine needs to decide what to offer based on the amount of money provided. Using the <code>money</code> variable, follow these rules:</p>
             <ul>
