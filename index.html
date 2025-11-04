@@ -49,6 +49,7 @@
         }
         #chapter-list .list-group-item {
             font-weight: 500; /* Medium weight for chapter titles */
+            font-weight: 600; /* Bolder for chapter titles */
             color: #343a40;
             border: none; /* Remove default borders */
             padding: 0.85rem 1.5rem; /* More vertical and horizontal space */
@@ -171,12 +172,32 @@
         #section-list .list-group-item {
             border: none;
         }
-        .section-list-for-chapter .list-group-item {
-            padding-top: 0.3rem; /* Reduced vertical padding */
-            padding-bottom: 0.3rem; /* Reduced vertical padding */
-            padding-left: 2.5rem; /* Indent section links */
-            font-size: 0.9rem;
-            color: #495057; /* Slightly lighter text for sections */
+        .section-list-wrapper {
+            background-color: #f8f9fa; /* A neutral light gray for better contrast */
+            border-top: 1px solid #dee2e6;
+            border-bottom: 1px solid #dee2e6;
+            margin: 0;
+            padding: 0.5rem 0;
+            box-shadow: inset 0 4px 8px -4px rgba(0,0,0,0.1); /* Inset shadow for depth */
+        }
+        .section-list-for-chapter a.list-group-item {
+            padding-top: 0.1rem; /* Much less vertical padding */
+            padding-bottom: 0.1rem; /* Much less vertical padding */
+            padding-left: calc(4.5rem - 3px); /* Even more indentation */
+            font-size: 0.85rem; /* Smaller font for section titles */
+            color: #6c757d !important; /* Lighter text for sections, with !important to override Bootstrap */
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            border-left: 3px solid transparent; /* Placeholder for alignment */
+            background-color: transparent; /* Ensure it inherits from wrapper */
+        }
+        .section-list-for-chapter .list-group-item:hover {
+            background-color: #dbeaff; /* A slightly darker blue on hover */
+            border-left-color: #a9caff;
+        }
+        .section-list-for-chapter .list-group-item.active-section {
+            color: #0c63e4;
+            font-weight: 500;
+            border-left-color: #0c63e4; /* Make border visible for active section */
         }
     </style>
 </head>
@@ -205,7 +226,7 @@
                 </div>
                 
                 <!-- Interactive Zone for Exercises and Code -->
-                <div class="interactive-zone">
+                <div class="interactive-zone" id="interactive-zone">
                     <div class="row">
                         <div class="col-lg-6">
                             <h3>Exercises</h3>
@@ -338,6 +359,10 @@
         function highlightActiveChapter(chapterId) {
             document.querySelectorAll('#chapter-list .list-group-item').forEach(item => item.classList.remove('active'));
             document.getElementById(`ch-btn-${chapterId}`).classList.add('active');
+
+            // Also manage a class on the parent for section styling
+            document.querySelectorAll('.chapter-container').forEach(item => item.classList.remove('active-chapter'));
+            document.getElementById(`ch-btn-${chapterId}`).closest('.chapter-container').classList.add('active-chapter');
         }
 
         function loadChapter(chapterId) {
@@ -400,9 +425,10 @@
             
             // Load exercise and section lists
             // First, hide all section lists
-            document.querySelectorAll('.section-list-for-chapter').forEach(list => {
-                list.style.display = 'none';
-                list.innerHTML = '';
+            document.querySelectorAll('.section-list-wrapper').forEach(wrapper => {
+                wrapper.style.display = 'none';
+                const list = wrapper.querySelector('.section-list-for-chapter');
+                if (list) list.innerHTML = '';
             });
 
             const exercisesListDiv = document.querySelector('.exercises-list');
@@ -415,15 +441,40 @@
             // Populate and show the section list for the CURRENT chapter
             if (chapter.sections && chapter.sections.length > 0) {
                 const sectionListContainer = document.getElementById(`sections-for-${chapterId}`);
-                sectionListContainer.style.display = 'block';
+                sectionListContainer.parentElement.style.display = 'block'; // Show the wrapper
+
                 chapter.sections.forEach((section, index) => {
                     const sectionId = `section-${index}`;
                     const link = document.createElement('a');
                     link.href = `#${sectionId}`;
                     link.className = 'list-group-item list-group-item-action border-0'; // border-0 for cleaner look
                     link.innerHTML = section.title.replace(/<[^>]*>/g, '').replace(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g, '').trim();
+                    
+                    // Add click listener to highlight active section
+                    link.onclick = () => {
+                        document.querySelectorAll('.section-list-for-chapter .list-group-item').forEach(item => item.classList.remove('active-section'));
+                        link.classList.add('active-section');
+                        // We return true to allow the default anchor behavior to proceed
+                        return true;
+                    };
                     sectionListContainer.appendChild(link);
                 });
+
+                // Add a link to the exercises at the end of the section list
+                if (chapter.exercises && chapter.exercises.length > 0) {
+                    const exerciseLink = document.createElement('a');
+                    exerciseLink.href = `#interactive-zone`;
+                    exerciseLink.className = 'list-group-item list-group-item-action border-0';
+                    exerciseLink.innerHTML = '<i class="bi bi-joystick"></i> Exercises'; // Add an icon for flair
+                    
+                    exerciseLink.onclick = () => {
+                        document.querySelectorAll('.section-list-for-chapter .list-group-item').forEach(item => item.classList.remove('active-section'));
+                        exerciseLink.classList.add('active-section');
+                        startExercises(); // Ensure exercise buttons are visible
+                        return true; // Allow default anchor behavior
+                    };
+                    sectionListContainer.appendChild(exerciseLink);
+                }
             }
 
             // Reset exercise view
@@ -772,8 +823,10 @@ json.dumps((result_passed, result_message))
                 // Create a container for the chapter link and its future section list
                  return `
                     <div class="chapter-container">
-                        <a href="#" id="ch-btn-${key}" class="list-group-item list-group-item-action" onclick="loadChapter('${key}'); highlightActiveChapter('${key}');">${chapter.title}</a>
-                        <div id="sections-for-${key}" class="list-group list-group-flush section-list-for-chapter" style="display: none;"></div>
+                        <a href="#" id="ch-btn-${key}" class="list-group-item list-group-item-action" onclick="loadChapter('${key}'); highlightActiveChapter('${key}');">${chapter.title.replace(/<br.*?>/g, ' ')}</a>
+                        <div class="section-list-wrapper" style="display: none;">
+                            <div id="sections-for-${key}" class="list-group list-group-flush section-list-for-chapter"></div>
+                        </div>
                     </div>`;
             }).join('');
 
