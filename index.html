@@ -648,6 +648,15 @@ json.dumps((result_passed, result_message))
             // Now that the links exist, update their markers
             Object.keys(tutorialContent).forEach(updateChapterMarker);
 
+            // Initialize CodeMirror on the textarea FIRST.
+            // This prevents the "Cannot read properties of null (reading 'setValue')" error.
+            codeEditor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+                lineNumbers: true,
+                mode: 'python',
+                theme: 'neat',
+                indentUnit: 4
+            });
+
             // Load the last visited chapter and exercise
             const lastChapter = localStorage.getItem('lastChapter') || 'chapter1';
             const lastExercise = localStorage.getItem('lastExercise');
@@ -660,14 +669,6 @@ json.dumps((result_passed, result_message))
                 startExercises(); // Display the exercise buttons
                 loadExercise(lastExercise); // Load the specific exercise
             }
-
-            // Initialize CodeMirror on the textarea
-            codeEditor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-                lineNumbers: true,
-                mode: 'python',
-                theme: 'neat',
-                indentUnit: 4
-            });
         }
     </script>
 </body>
