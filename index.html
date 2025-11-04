@@ -216,17 +216,20 @@
                             <div id="current-exercise-content" class="exercise" style="display: none;">
                                 <!-- Exercise description loads here -->
                             </div>
+                        </div>
+                        <div class="col-lg-6 mt-4 mt-lg-0">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h3>Code Playground</h3>
+                                <!-- The hint button will be part of the hint-section div below -->
+                                <button id="btn-hint" class="btn btn-warning" onclick="showHint()" style="display: none;"><i class="bi bi-lightbulb"></i> Hint</button>
+                            </div>
                             <div id="hint-section" style="display: none;">
-                                <button class="btn btn-info mt-2" onclick="showHint()">Show Hint</button>
-                                <div id="hint-box" class="hint-container" style="display: none;">
+                                <div id="hint-box" class="hint-container mb-2" style="display: none;">
                                     <i class="bi bi-lightbulb-fill"></i>
                                     <span id="hint-text"></span>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-6 mt-4 mt-lg-0">
-                            <h3>Code Playground</h3>
-                            <textarea id="editor" placeholder="Try some python code here ..."></textarea> <!-- This will be replaced by CodeMirror -->
+                            <textarea id="editor" placeholder="Try some python code here ..."></textarea>
                             <div class="mb-2">
                                 <button class="btn btn-primary" onclick="runCode()">Run Code</button>
                                 <button id="btn-check-exercise" class="btn btn-warning" onclick="checkExercise()" style="display: none;">Check Exercise</button>
@@ -417,13 +420,14 @@
             document.getElementById('btn-check-exercise').style.display = 'inline-block';
 
             // Show hint section if a hint exists, but hide the hint box itself
-            const hintSection = document.getElementById('hint-section');
+            const hintButton = document.getElementById('btn-hint');
             if (currentExercise.hint) {
-                hintSection.style.display = 'block';
+                hintButton.style.display = 'inline-block';
                 document.getElementById('hint-box').style.display = 'none';
                 document.getElementById('hint-text').textContent = '';
             } else {
-                hintSection.style.display = 'none';
+                hintButton.style.display = 'none';
+                document.getElementById('hint-box').style.display = 'none'; // Also hide the box
             }
 
             // Update active button
@@ -477,6 +481,7 @@
                 // Toggle hint visibility
                 if (hintBox.style.display === 'none') {
                     hintText.textContent = currentExercise.hint;
+                    hintBox.parentElement.style.display = 'block'; // Show the container
                     hintBox.style.display = 'flex';
                 } else {
                     hintBox.style.display = 'none';
