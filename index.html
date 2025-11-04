@@ -240,8 +240,10 @@
                         </div>
                         <div class="col-12 mt-4 mt-lg-0">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h3>Code Playground</h3>
-                                <!-- The hint button will be part of the hint-section div below -->
+                                <div class="d-flex align-items-center">
+                                    <h3>Exercise Workspace</h3>
+                                    <span id="back-to-lesson-container" class="ms-3"></span>
+                                </div>
                                 <button id="btn-hint" class="btn btn-warning" onclick="showHint()" style="display: none;"><i class="bi bi-lightbulb"></i> Hint</button>
                             </div>
                             <div id="hint-section" style="display: none;">
@@ -260,6 +262,27 @@
                             <div id="output"></div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Template for inline playgrounds -->
+                <template id="inline-playground-template">
+                    <div class="inline-playground mt-2 mb-3 p-3 border rounded bg-light">
+                        <textarea class="inline-editor"></textarea>
+                        <div class="d-flex mt-2">
+                            <button class="btn btn-primary btn-sm run-inline-code">
+                                <i class="bi bi-play-fill"></i> Run
+                            </button>
+                            <button class="btn btn-secondary btn-sm ms-2 close-inline-playground">
+                                <i class="bi bi-x-lg"></i> Close
+                            </button>
+                        </div>
+                        <div class="inline-output mt-2 p-2 border rounded bg-white" style="min-height: 50px; font-family: monospace; white-space: pre-wrap;"></div>
+                    </div>
+                </template>
+
+                <div class="chapter-nav d-flex justify-content-between mt-4">
+                    <button id="btn-prev-chapter" class="btn btn-outline-secondary" onclick="loadPrevChapter()"><i class="bi bi-arrow-left"></i> Previous Chapter</button>
+                    <button id="btn-next-chapter" class="btn btn-outline-secondary" onclick="loadNextChapter()">Next Chapter <i class="bi bi-arrow-right"></i></button>
                 </div>
             </main>
         </div>
@@ -407,8 +430,8 @@
                 const tryButton = document.createElement('button');
                 tryButton.className = 'btn btn-sm btn-primary';
                 tryButton.innerHTML = '<i class="bi bi-play-circle"></i> Try It';
-                tryButton.title = 'Send to Playground';
-                tryButton.onclick = (e) => sendToPlayground(pre);
+                tryButton.title = 'Try this code';
+                tryButton.onclick = (e) => sendToPlayground(pre, e);
 
                 const copyButton = document.createElement('button');
                 copyButton.className = 'btn btn-sm btn-secondary';
@@ -485,6 +508,7 @@
             document.getElementById('btn-check-exercise').style.display = 'none';
             document.getElementById('btn-reset-code').style.display = 'none';
             document.getElementById('hint-section').style.display = 'none';
+            document.getElementById('back-to-lesson-container').innerHTML = ''; // Clear back link
         }
 
         function startExercises() {
@@ -618,19 +642,49 @@
             }
         }
 
-        function sendToPlayground(preElement) {
-            const code = preElement.querySelector('code')?.innerText || preElement.innerText;
-            codeEditor.setValue(code);
+        function sendToPlayground(preElement, event) {
+            const wrapper = preElement.closest('.code-wrapper');
+            if (!wrapper) return;
 
-            // Scroll to the editor and give it focus
-            codeEditor.getWrapperElement().scrollIntoView({ behavior: 'smooth', block: 'center' });
-            codeEditor.focus();
-            
-            // Flash the editor to provide visual feedback (note: this won't work on CodeMirror directly, but we can style the wrapper)
-            editor.style.boxShadow = '0 0 0 2px rgba(13, 110, 253, 0.5)';
-            setTimeout(() => {
-                editor.style.boxShadow = '';
-            }, 500);
+            // If a playground already exists for this snippet, do nothing.
+            if (wrapper.nextElementSibling && wrapper.nextElementSibling.classList.contains('inline-playground')) {
+                return;
+            }
+
+            // Clone the template
+            const template = document.getElementById('inline-playground-template');
+            const playground = template.content.cloneNode(true).firstElementChild;
+
+            // Insert the new playground right after the code wrapper
+            wrapper.after(playground);
+
+            const code = preElement.querySelector('code')?.innerText || preElement.innerText;
+            const textarea = playground.querySelector('.inline-editor');
+            textarea.value = code;
+
+            // Initialize CodeMirror on the new textarea
+            const inlineEditor = CodeMirror.fromTextArea(textarea, {
+                lineNumbers: true,
+                mode: 'python',
+                theme: 'neat',
+                indentUnit: 4
+            });
+
+            const outputDiv = playground.querySelector('.inline-output');
+            const runButton = playground.querySelector('.run-inline-code');
+            const closeButton = playground.querySelector('.close-inline-playground');
+
+            // Wire up the buttons
+            runButton.onclick = () => runInlineCode(inlineEditor, outputDiv);
+            closeButton.onclick = () => {
+                playground.remove();
+                event.target.style.display = 'inline-block'; // Show 'Try It' button again
+            };
+
+            // Hide the 'Try It' button that was clicked
+            event.target.style.display = 'none';
+
+            inlineEditor.focus();
         }
 
         function copyCodeToClipboard(event, preElement) {
@@ -646,6 +700,27 @@
             }).catch(err => {
                 console.error('Failed to copy code', err);
             });
+        }
+
+        async function runInlineCode(editorInstance, outputElement) {
+            if (!pyodide) return;
+            const code = editorInstance.getValue();
+            let output = '';
+
+            try {
+                outputElement.textContent = 'Running...';
+                pyodide.runPython(`
+                    import io, sys
+                    sys.stdout = io.StringIO()
+                `);
+                
+                await pyodide.runPythonAsync(code);
+                output = pyodide.runPython("sys.stdout.getvalue()");
+            } catch (error) {
+                output = 'Error: ' + error.message;
+            }
+            
+            outputElement.textContent = output;
         }
 
         async function runCode() {
