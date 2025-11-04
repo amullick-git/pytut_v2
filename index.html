@@ -562,6 +562,9 @@
             // Show the entire workspace container
             document.getElementById('exercise-workspace-container').style.display = 'block';
 
+            // Refresh the editor to fix layout issues when it becomes visible
+            setTimeout(() => codeEditor.refresh(), 10);
+
             const savedCode = getSavedCodeForExercise(currentChapter, exerciseId);
             codeEditor.setValue(savedCode || currentExercise.starter_code || '');
 
@@ -702,6 +705,9 @@
                 theme: 'neat',
                 indentUnit: 4
             });
+
+            // Refresh the editor to fix layout issues when it becomes visible
+            setTimeout(() => inlineEditor.refresh(), 10);
 
             const outputDiv = playground.querySelector('.inline-output');
             const runButton = playground.querySelector('.run-inline-code');
