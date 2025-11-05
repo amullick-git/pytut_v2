@@ -110,18 +110,23 @@
         /* CodeMirror styling */
         .CodeMirror {
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 4px; /* Existing style */
+            height: 150px; /* Smaller initial height for the editor */
+            max-height: 300px; /* Allows editor to expand up to this height */
+            overflow-y: auto; /* Adds scrollbar if content exceeds max-height */
         }
         #output {
             width: 100%;
-            min-height: 100px;
+            min-height: 50px; /* Smaller minimum height for the output */
             border: 1px solid #ccc;
             border-radius: 4px;
             padding: 10px;
             background-color: #f8f9fa;
             font-family: monospace;
             white-space: pre-wrap;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* Existing style */
+            max-height: 200px; /* Limits max height for output, then scrolls */
+            overflow-y: auto; /* Adds scrollbar if content exceeds max-height */
         }
         .exercise {
             padding: 1.5rem;
@@ -199,6 +204,22 @@
             font-weight: 500;
             border-left-color: #0c63e4; /* Make border visible for active section */
         }
+        .main-header {
+            background: linear-gradient(to right, #e7f5ff, #fbfdff);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .inline-exercise-header {
+            background: linear-gradient(to right, #e6f9f1, #fdfdff); /* Light green to off-white */
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border: 1px solid #eee;
+            border-bottom: none;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
     </style>
 </head>
 <body>
@@ -216,7 +237,7 @@
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="pt-3 pb-2 mb-3 border-bottom">
+                <div class="main-header">
                     <h1 class="h2">Python Adventure: Learn to Code</h1>
                 </div>
 
@@ -255,7 +276,7 @@
                             <textarea id="editor" placeholder="Try some python code here ..."></textarea>
                             <div class="d-flex mb-2">
                                 <button class="btn btn-primary" onclick="runCode()">Run Code</button>
-                                <button id="btn-check-exercise" class="btn btn-info" onclick="checkExercise()" style="display: none;">Check Exercise</button>
+                                <button id="btn-check-exercise" class="btn btn-info" onclick="checkMainExercise()" style="display: none;">Check Exercise</button>
                                 <button id="btn-reset-code" class="btn btn-outline-danger" onclick="resetCode()" style="display: none;"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
                                 <button id="btn-next-exercise" class="btn btn-success ms-auto" onclick="loadNextExercise()" style="display: none;">Next Exercise</button>
                             </div>
@@ -335,25 +356,25 @@
             localStorage.setItem('pythonAdventureProgress', JSON.stringify(progress));
         }
 
-        function saveCodeForExercise(chapterId, exerciseId, code) {
-            if (!chapterId || !exerciseId || !currentExercise) return;
+        function saveCodeForExercise(chapterId, exerciseId, code, exercise) {
+            if (!chapterId || !exerciseId || !exercise) return;
             const key = `code-${chapterId}-${exerciseId}`;
             const dataToSave = {
                 code: code,
-                version: currentExercise.version || 1 // Save code with its version
+                version: exercise.version || 1 // Save code with its version
             };
             localStorage.setItem(key, JSON.stringify(dataToSave));
         }
 
-        function getSavedCodeForExercise(chapterId, exerciseId) {
-            if (!chapterId || !exerciseId || !currentExercise) return null;
+        function getSavedCodeForExercise(chapterId, exerciseId, exercise) {
+            if (!chapterId || !exerciseId || !exercise) return null;
             const key = `code-${chapterId}-${exerciseId}`;
             const savedData = localStorage.getItem(key);
             if (!savedData) return null;
 
             const parsedData = JSON.parse(savedData);
             // If saved version matches current exercise version, return the code.
-            if (parsedData.version === currentExercise.version) {
+            if (parsedData.version === exercise.version) {
                 return parsedData.code;
             }
             return null; // Otherwise, discard saved code.
@@ -407,12 +428,23 @@
                 chapterHtml += `<div class="alert alert-info">${chapter.story}</div>`;
 
                 chapter.sections.forEach((section, index) => {
-                    // Give each section an ID so we can link to it
-                    const sectionId = `section-${index}`;
+                    const sectionId = `section-${chapterId}-${index}`;
                     if (index > 0) {
                         chapterHtml += '<hr class="my-4">'; // Add a separator between sections
                     }
                     chapterHtml += `<h3 id="${sectionId}">${section.title}</h3><div>${section.content}</div>`;
+
+                    // If the section has an exercise, append a placeholder for it
+                    if (section.exercise) {
+                        chapterHtml += `
+                            <div class="inline-exercise-container" 
+                                 data-chapter-id="${chapterId}" 
+                                 data-exercise-id="${section.exercise.id}"
+                                 data-section-index="${index}">
+                                <!-- Inline exercise will be loaded here -->
+                            </div>
+                        `;
+                    }
                 });
             } else { // Fallback to the old structure (single content property)
                 chapterHtml = chapter.content;
@@ -466,13 +498,23 @@
                 const sectionListContainer = document.getElementById(`sections-for-${chapterId}`);
                 sectionListContainer.parentElement.style.display = 'block'; // Show the wrapper
 
+                const progress = getProgress();
+
                 chapter.sections.forEach((section, index) => {
-                    const sectionId = `section-${index}`;
+                    const sectionId = `section-${chapterId}-${index}`;
                     const link = document.createElement('a');
                     link.href = `#${sectionId}`;
                     link.className = 'list-group-item list-group-item-action border-0'; // border-0 for cleaner look
-                    link.innerHTML = section.title.replace(/<[^>]*>/g, '').replace(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g, '').trim();
                     
+                    let linkHTML = section.title.replace(/<[^>]*>/g, '').replace(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g, '').trim();
+                    
+                    // Add a checkmark if the section's exercise is complete
+                    if (section.exercise && (progress[chapterId] || []).includes(section.exercise.id)) {
+                        linkHTML = '✅ ' + linkHTML;
+                    }
+                    link.innerHTML = linkHTML;
+                    link.id = `section-link-${chapterId}-${index}`;
+
                     // Add click listener to highlight active section
                     link.onclick = () => {
                         document.querySelectorAll('.section-list-for-chapter .list-group-item').forEach(item => item.classList.remove('active-section'));
@@ -500,6 +542,13 @@
                 }
             }
 
+            // After setting the chapter HTML, load any inline exercises
+            document.querySelectorAll('.inline-exercise-container').forEach(container => {
+                const chapId = container.dataset.chapterId;
+                const exId = container.dataset.exerciseId;
+                loadInlineExercise(container, chapId, exId);
+            });
+
             // Reset exercise view
             document.getElementById('current-exercise-content').style.display = 'none';
             document.getElementById('output').textContent = '';
@@ -519,6 +568,59 @@
 
             prevButton.style.display = currentChapterIndex === 0 ? 'none' : 'inline-block';
             nextButton.style.display = currentChapterIndex === chapterKeys.length - 1 ? 'none' : 'inline-block';
+        }
+
+        function loadInlineExercise(container, chapterId, exerciseId) {
+            const chapter = tutorialContent[chapterId];
+            const exercise = chapter.sections.flatMap(s => s.exercise || []).find(ex => ex.id === exerciseId);
+            if (!exercise) return;
+
+            // Use a template for the exercise workspace
+            const exerciseHeader = document.createElement('div');
+            exerciseHeader.className = 'inline-exercise-header';
+
+            const workspace = document.getElementById('inline-playground-template').content.cloneNode(true);
+            const exerciseTitle = document.createElement('h4');
+            exerciseTitle.textContent = exercise.title;
+            const exerciseDesc = document.createElement('div');
+            exerciseDesc.innerHTML = exercise.description;
+
+            exerciseHeader.appendChild(exerciseTitle);
+            exerciseHeader.appendChild(exerciseDesc);
+            container.appendChild(exerciseHeader);
+            container.appendChild(workspace);
+
+            const textarea = container.querySelector('.inline-editor');
+            const savedCode = getSavedCodeForExercise(chapterId, exerciseId, exercise);
+            textarea.value = savedCode || exercise.starter_code || '';
+
+            const editor = CodeMirror.fromTextArea(textarea, {
+                lineNumbers: true,
+                mode: 'python',
+                theme: 'neat',
+                indentUnit: 4
+            });
+            setTimeout(() => editor.refresh(), 10);
+
+            const outputDiv = container.querySelector('.inline-output');
+            const runButton = container.querySelector('.run-inline-code');
+            const checkButton = document.createElement('button');
+            checkButton.className = 'btn btn-info btn-sm ms-2';
+            checkButton.textContent = 'Check Exercise';
+            runButton.after(checkButton);
+
+            // Rename "Close" to "Reset" and change its function
+            const resetButton = container.querySelector('.close-inline-playground');
+            resetButton.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Reset';
+            resetButton.onclick = () => {
+                if (confirm('Are you sure you want to reset your code?')) {
+                    editor.setValue(exercise.starter_code || '');
+                }
+            };
+
+            // Wire up the buttons
+            runButton.onclick = () => runInlineCode(editor, outputDiv, chapterId, exerciseId, exercise);
+            checkButton.onclick = () => checkExercise(editor, outputDiv, chapterId, exercise);
         }
 
         function startExercises() {
@@ -543,8 +645,8 @@
         function loadExercise(exerciseId) {
             // Save code from the previous exercise before loading the new one
             if (currentChapter && currentExercise && codeEditor) {
-                const code = codeEditor.getValue();
-                saveCodeForExercise(currentChapter, currentExercise.id, code);
+                const code = codeEditor.getValue(); // Get value from editor
+                saveCodeForExercise(currentChapter, currentExercise.id, code, currentExercise); // Pass the exercise object
             }
 
             const chapter = tutorialContent[currentChapter];
@@ -565,7 +667,7 @@
             // Refresh the editor to fix layout issues when it becomes visible
             setTimeout(() => codeEditor.refresh(), 10);
 
-            const savedCode = getSavedCodeForExercise(currentChapter, exerciseId);
+            const savedCode = getSavedCodeForExercise(currentChapter, exerciseId, currentExercise);
             codeEditor.setValue(savedCode || currentExercise.starter_code || '');
 
             document.getElementById('output').textContent = '';
@@ -741,10 +843,15 @@
             });
         }
 
-        async function runInlineCode(editorInstance, outputElement) {
+        async function runInlineCode(editorInstance, outputElement, chapterId, exerciseId, exercise) {
             if (!pyodide) return;
             const code = editorInstance.getValue();
             let output = '';
+
+            // Save code for inline exercises too
+            if (chapterId && exerciseId && exercise) {
+                saveCodeForExercise(chapterId, exerciseId, code, exercise);
+            }
 
             try {
                 outputElement.textContent = 'Running...';
@@ -760,6 +867,7 @@
             }
             
             outputElement.textContent = output;
+            return output;
         }
 
         async function runCode() {
@@ -767,7 +875,7 @@
             const code = codeEditor.getValue();
 
             if (currentChapter && currentExercise) {
-                saveCodeForExercise(currentChapter, currentExercise.id, code);
+                saveCodeForExercise(currentChapter, currentExercise.id, code, currentExercise);
             }
 
             let output = '';
@@ -788,15 +896,25 @@
             return output;
         }
 
-        async function checkExercise() {
-            if (!currentExercise) {
+        function checkMainExercise() {
+            checkExercise(codeEditor, document.getElementById('output'), currentChapter, currentExercise);
+        }
+
+        async function checkExercise(editor = codeEditor, outputEl = document.getElementById('output'), chapId = currentChapter, exercise = currentExercise) {
+            if (!exercise) {
                 alert('Please select an exercise first!');
                 return;
             }
-            
-            const userCode = codeEditor.getValue();
-            const userOutput = await runCode();
-            const expectedOutput = await runSolution(currentExercise.solution);
+
+            const userCode = editor.getValue();
+            const userOutput = await runInlineCode(editor, outputEl, chapId, exercise.id, exercise); // Use runInlineCode to get output
+            const expectedOutput = await runSolution(exercise.solution);
+
+            // Clear previous check results from output
+            if (outputEl.textContent.includes('--- CHECK RESULTS ---')) {
+                outputEl.textContent = userOutput;
+            }
+
 
             let feedback = [];
             let allChecksPassed = true;
@@ -810,8 +928,8 @@
             }
 
             // 2. Run custom validation checks if they exist
-            if (currentExercise.validation) {
-                for (const check of currentExercise.validation) { // Use for...of to handle async
+            if (exercise.validation) {
+                for (const check of exercise.validation) { // Use for...of to handle async
                     if (check.type === 'code_contains' && !userCode.includes(check.value)) {
                         feedback.push(check.message);
                         allChecksPassed = false;
@@ -825,7 +943,7 @@
                     }
                     if (check.type === 'output_match_cases') {
                         for (const testCase of check.cases) {
-                            const caseResult = await runCodeWithSetup(userCode, testCase.setup_code);
+                            const caseResult = await runCodeWithSetup(userCode, testCase.setup_code, exercise);
                             if (caseResult.trim() === testCase.expected_output.trim()) {
                                 feedback.push(`✅ ${testCase.name}: Passed`);
                             } else {
@@ -842,30 +960,23 @@
             let summaryMessage = '';
             if(allChecksPassed) {
                 summaryMessage = '\n\n🎉 Great job! All checks passed!';
-                saveProgress(currentChapter, currentExercise.id);
-                const button = document.getElementById(`btn-ex-${currentExercise.id}`);
+                saveProgress(chapId, exercise.id);
+                const button = document.getElementById(`btn-ex-${exercise.id}`);
                 if (button) {
                     button.innerHTML = button.innerHTML.replace('✏️ ', '');
                     if (!button.innerHTML.includes('✅')) {
                         button.innerHTML = '✅ ' + button.innerHTML;
                     }
                 }
-                updateChapterMarker(currentChapter); // Update chapter status in sidebar
+                updateChapterMarker(chapId); // Update chapter status in sidebar
 
-                // Check if all exercises in the chapter are complete
-                const chapter = tutorialContent[currentChapter];
-                const progress = getProgress();
-                const completedCount = (progress[currentChapter] || []).length;
-                const totalExercises = chapter.exercises ? chapter.exercises.length : 0;
-
-                if (totalExercises > 0 && completedCount === totalExercises) {
-                    // Check if there is a next chapter
-                    const chapterKeys = Object.keys(tutorialContent);
-                    const currentChapterIndex = chapterKeys.indexOf(currentChapter);
-                    if (currentChapterIndex < chapterKeys.length - 1) {
-                        const nextChapterId = chapterKeys[currentChapterIndex + 1];
-                        // Add a link to the summary message to go to the next chapter
-                        summaryMessage += `\n\n🏆 You've completed all exercises in this chapter! <a href="#" onclick="event.preventDefault(); loadChapter('${nextChapterId}'); highlightActiveChapter('${nextChapterId}');">Move to the next chapter.</a>`;
+                // Update section link in sidebar if it was an inline exercise
+                const section = tutorialContent[chapId].sections.find(s => s.exercise && s.exercise.id === exercise.id);
+                if (section) {
+                    const sectionIndex = tutorialContent[chapId].sections.indexOf(section);
+                    const sectionLink = document.getElementById(`section-link-${chapId}-${sectionIndex}`);
+                    if (sectionLink && !sectionLink.innerHTML.includes('✅')) {
+                        sectionLink.innerHTML = '✅ ' + sectionLink.innerHTML;
                     }
                 }
             } else {
@@ -875,7 +986,7 @@
             const detailedFeedback = '\n\n--- CHECK RESULTS ---\n' + feedback.join('\n');
             
             // Prepend the summary and then add the detailed feedback
-            document.getElementById('output').textContent += summaryMessage + detailedFeedback;
+            outputEl.textContent += summaryMessage + detailedFeedback;
         }
 
         async function runSolution(solution) {
@@ -887,9 +998,9 @@
             return pyodide.runPython("sys.stdout.getvalue()");
         }
 
-        async function runCodeWithSetup(userCode, setupCode) {
+        async function runCodeWithSetup(userCode, setupCode, exercise) {
             if (!pyodide) return;
-            if (!currentExercise || !currentExercise.starter_code) return userCode; // Failsafe
+            if (!exercise || !exercise.starter_code) return userCode; // Failsafe
 
             let output = '';
             try {
@@ -900,8 +1011,8 @@
 
                 // As you suggested, we remove the original setup from the user's code.
                 // We identify the setup part of the starter code (everything before the comment).
-                const setupMarker = '# --- DO NOT DELETE: Your code starts below ---';
-                const originalSetupLines = currentExercise.starter_code.split(setupMarker)[0].split('\n').filter(line => line.trim() !== '');
+                const setupMarker = '# --- DO NOT DELETE: Your code starts below ---'; // Make sure this marker is in starter_code
+                const originalSetupLines = (exercise.starter_code.split(setupMarker)[0] || '').split('\n').filter(line => line.trim() !== '');
 
                 // Filter out those setup lines from the user's submitted code.
                 const userLogicOnly = userCode.split('\n').filter(userLine => 
@@ -921,14 +1032,12 @@
         async function runAstCheck(userCode, checkScript) {
             try {
                 // Pass user's code to pyodide as a global variable
-                pyodide.globals.set("user_code_to_check", userCode);
+                pyodide.globals.set("user_code", userCode);
                 
                 // The checkScript will use the global 'user_code_to_check' variable
                 const fullScript = `
 import ast
 import json
-
-user_code = user_code_to_check
 
 ${checkScript}
 

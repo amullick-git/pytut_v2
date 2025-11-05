@@ -149,7 +149,7 @@ print(f"The {adjective} {noun} decided to {verb} on the moon.")`,
             solution: `bill_str = "50.00"
 bill_float = float(bill_str)
 tip = bill_float * 0.20
-print(f"A 20% tip would be: ${'{tip}'}")`,
+print(f"A 20% tip would be: \${tip}")`,
             hint: "You'll need to use `float()` to convert the `bill_str` to a number you can do math with. The formula for the tip is `bill * 0.20`.",
             validation: [
                 {
