@@ -94,7 +94,7 @@ print(num_as_int * 2) # Output: 84</code></pre>`
             version: 1,
             title: 'The Circle Area Calculator',
             description: `<p>Calculate the area of a circle with a radius of 5. 🎯</p>
-<p>The formula is <code>π × r²</code>. Use the provided variables and print the result.</p>
+<p>The formula is <code>π × r²</code>. Use the provided variables to calculate the result, store it in a new variable called <code>area</code>, and then print the <code>area</code> variable.</p>
 <pre><code>radius = 5
 pi = 3.14159</code></pre>`,
             solution: `radius = 5
@@ -251,15 +251,20 @@ quantity = 3
             id: 'potion_distribution',
             version: 1,
             title: 'Potion Distribution',
-            description: `<p>You have 17 health potions to distribute among 5 adventurers. 🧙‍♂️</p>
-<p>Calculate how many potions each adventurer gets and how many are left over. This requires two special operators:</p>
+            description: `<p>You have 17 health potions to distribute evenly among 5 adventurers. 🧙‍♂️</p>
+<p>Your task is to calculate two things and print the results:</p>
+<ol>
+    <li>How many potions each adventurer gets.</li>
+    <li>How many potions are left over.</li>
+</ol>
+<p>You will need to use two special operators for this:</p>
 <ul>
     <li><code>//</code> (Integer Division): Divides and rounds down to the nearest whole number.</li>
     <li><code>%</code> (Modulo): Gives you the remainder of a division.</li>
 </ul>
-<pre><code>potions = 17
-adventurers = 5
-adventurers = 5</code></pre>`,
+<p>Print the results in the following format, using variables for the numbers:</p>
+<pre><code>Each adventurer gets [number] potions.
+There are [number] potions left over.</code></pre>`,
             solution: `potions = 17
 adventurers = 5
 potions_per_adventurer = potions // adventurers
